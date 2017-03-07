@@ -29,6 +29,8 @@ If you have [Docker](https://docker.io/) use:
 And to create the database with:
 
 `CREATE USER 'microservice'@'%' IDENTIFIED BY 'microservice123';`
+
 `CREATE DATABASE microservice DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_bin;`
+
 `GRANT ALL PRIVILEGES ON microservice.* to 'microservice'@'%';`
 
