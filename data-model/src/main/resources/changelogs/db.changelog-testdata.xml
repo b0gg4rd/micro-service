@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="
+        	http://www.liquibase.org/xml/ns/dbchangelog
+        	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        	http://www.liquibase.org/xml/ns/dbchangelog-ext
+        	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+  <changeSet id="person-data" author="b0gg4rd">
+    <comment>Load with testing data for person table</comment>
+    <loadData tableName="person"
+      file="test/person.csv">
+      <column name="birthday" type="DATE" />
+    </loadData>
+  </changeSet>
+
+</databaseChangeLog>
+
