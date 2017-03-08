@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.coatli.java.persistence.PersonMapper">
+
+  <insert id="create">
+    INSERT INTO
+      person
+    (
+      id,
+      name,
+      birthday,
+      age
+    )
+    VALUES
+    (
+      #{id,       mode=IN, javaType=Integer, jdbcType=INTEGER},
+      #{name,     mode=IN, javaType=String,  jdbcType=VARCHAR},
+      #{birthday, mode=IN, javaType=Date,    jdbcType=DATE},
+      #{age,      mode=IN, javaType=Integer, jdbcType=INTEGER}
+    )
+  </insert>
+
+  <select id="findAll"
+          resultType="net.coatli.java.domain.Person">
+    SELECT
+      id,
+      name,
+      birthday,
+      age
+    FROM
+      person
+  </select>
+
+</mapper>

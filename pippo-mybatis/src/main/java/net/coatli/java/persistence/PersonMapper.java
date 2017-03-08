@@ -2,14 +2,21 @@ package net.coatli.java.persistence;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Select;
-
 import net.coatli.java.domain.Person;
-import net.coatli.java.events.ResponseAllPersonsEvent;
+import net.coatli.java.events.RequestAllPersonsEvent;
 
 public interface PersonMapper {
 
-  @Select("SELECT * FROM person")
-  public List<Person> findAll(ResponseAllPersonsEvent requestAllPersonsEvent);
+  public int create(Person person);
+
+  public Person retrive(Long key);
+
+  public int update(Person person);
+
+  public int delete(Long key);
+
+  public List<Person> findAll();
+
+  public List<Person> findBy(RequestAllPersonsEvent requestAllPersonsEvent);
 
 }
