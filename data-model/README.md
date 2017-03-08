@@ -6,8 +6,6 @@
 - Apache Maven 3.x
 - MariaDB 10.x
 
-## Contribution guide
-
 ## Building
 
 The first time just use:
@@ -26,7 +24,7 @@ If you have [Docker](https://docker.io/) use:
 
 `S docker run -d -p 3306:3306 --name mariadb-local mariadb:10.0.26`
 
-And to create the database with:
+And create the database with:
 
 `CREATE USER 'microservice'@'%' IDENTIFIED BY 'microservice123';`
 
