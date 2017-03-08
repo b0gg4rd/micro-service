@@ -19,13 +19,23 @@ public class MyBatisConfig {
 
   private static final String DEFAULT_ENVIRONMENT = "production";
 
-  public DataSource dataSource() {
+  private static SqlSessionFactory sqlSessionFactory;
+
+  static {
+    sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration());
+  }
+
+  public static SqlSessionFactory sqlSessionFactory() {
+    return sqlSessionFactory;
+  }
+
+  private static DataSource dataSource() {
     final BasicDataSource dataSource = new BasicDataSource();
 
     final Properties prop = new Properties();
 
     try {
-      prop.load(getClass().getResourceAsStream("/conf/application.properties"));
+      prop.load(MyBatisConfig.class.getResourceAsStream("/conf/application.properties"));
     } catch (final IOException exc) {
       throw new RuntimeException("Error reading application.properties", exc);
     }
@@ -38,24 +48,20 @@ public class MyBatisConfig {
     return dataSource;
   }
 
-  public TransactionFactory transactionFactory() {
+  private static TransactionFactory transactionFactory() {
     return new JdbcTransactionFactory();
   }
 
-  public Environment environment() {
+  private static Environment environment() {
     return new Environment(DEFAULT_ENVIRONMENT, transactionFactory(), dataSource());
   }
 
-  public Configuration configuration() {
+  private static Configuration configuration() {
     final Configuration configuration = new Configuration(environment());
 
     configuration.addMapper(PersonMapper.class);
 
     return configuration;
-  }
-
-  public SqlSessionFactory sqlSessionFactory() {
-    return new SqlSessionFactoryBuilder().build(configuration());
   }
 
 }

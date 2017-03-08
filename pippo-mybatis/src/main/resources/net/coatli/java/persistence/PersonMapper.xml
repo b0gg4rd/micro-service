@@ -16,9 +16,9 @@
     )
     VALUES
     (
-      #{id,       mode=IN, javaType=Integer, jdbcType=INTEGER},
+      #{key,      mode=IN, javaType=Long,    jdbcType=INTEGER},
       #{name,     mode=IN, javaType=String,  jdbcType=VARCHAR},
-      #{birthday, mode=IN, javaType=Date,    jdbcType=DATE},
+      #{birthDay, mode=IN, javaType=Date,    jdbcType=DATE},
       #{age,      mode=IN, javaType=Integer, jdbcType=INTEGER}
     )
   </insert>
