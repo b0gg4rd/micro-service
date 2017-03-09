@@ -9,7 +9,7 @@ public interface PersonMapper {
 
   public int create(Person person);
 
-  public Person retrive(Long key);
+  public Person retrieve(Long key);
 
   public int update(Person person);
 

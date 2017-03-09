@@ -13,6 +13,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
+import net.coatli.java.domain.Person;
 import net.coatli.java.persistence.PersonMapper;
 
 public class MyBatisConfig {
@@ -59,6 +60,7 @@ public class MyBatisConfig {
   private static Configuration configuration() {
     final Configuration configuration = new Configuration(environment());
 
+    configuration.getTypeAliasRegistry().registerAlias(Person.class);
     configuration.addMapper(PersonMapper.class);
 
     return configuration;

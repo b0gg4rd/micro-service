@@ -5,7 +5,15 @@
 
 <mapper namespace="net.coatli.java.persistence.PersonMapper">
 
-  <insert id="create">
+  <sql id="allColumns">
+    id       AS "key",
+    name     AS name,
+    birthday AS birthDay,
+    age      AS age
+  </sql>
+
+  <insert id="create"
+          parameterType="Person">
     INSERT INTO
       person
     (
@@ -22,14 +30,22 @@
       #{age,      mode=IN, javaType=Integer, jdbcType=INTEGER}
     )
   </insert>
+  
+  <select id="retrieve"
+          parameterType="Long"
+          resultType="Person">
+    SELECT
+    <include refid="allColumns" />
+    FROM
+      person
+    WHERE
+      id = #{key, mode=IN, javaType=Long, jdbcType=INTEGER}
+  </select>
 
   <select id="findAll"
-          resultType="net.coatli.java.domain.Person">
+          resultType="Person">
     SELECT
-      id,
-      name,
-      birthday,
-      age
+    <include refid="allColumns" />
     FROM
       person
   </select>

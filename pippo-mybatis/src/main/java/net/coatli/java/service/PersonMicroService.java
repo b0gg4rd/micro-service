@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import net.coatli.java.domain.Person;
 import net.coatli.java.events.ResponseAllPersonsEvent;
+import net.coatli.java.events.ResponsePersonEvent;
 import net.coatli.java.persistence.PersonMapper;
 import ro.pippo.core.Application;
 
@@ -32,6 +33,20 @@ public class PersonMicroService extends Application {
 
       }
 
+    });
+
+    GET("/persons/{key}", (routeContext) -> {
+      LOGGER.info("Retrieving person");
+
+      try (SqlSession sqlSession = sqlSessionFactory().openSession()) {
+
+        final Person person = sqlSession.getMapper(PersonMapper.class).retrieve(routeContext.getParameter("key").toLong());
+
+        routeContext.json().send(
+          new ResponsePersonEvent()
+            .setDomainFound(person != null)
+            .setPerson(person));
+      }
     });
 
     GET("/persons/", (routeContext) -> {
