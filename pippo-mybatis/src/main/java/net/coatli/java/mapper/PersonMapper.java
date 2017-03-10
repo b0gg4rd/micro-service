@@ -2,9 +2,12 @@ package net.coatli.java.mapper;
 
 import java.util.List;
 
-import net.coatli.java.domain.Person;
-import net.coatli.java.events.RequestAllPersonsEvent;
+import org.apache.ibatis.annotations.Mapper;
 
+import net.coatli.java.domain.Person;
+import net.coatli.java.event.RequestAllPersonsEvent;
+
+@Mapper
 public interface PersonMapper {
 
   public int create(Person person);

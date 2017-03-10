@@ -49,5 +49,22 @@
     FROM
       person
   </select>
+  
+  <select id="findBy"
+          parameterType="RequestAllPersonsEvent"
+          resultType="Person">
+    SELECT
+    <include refid="allColumns" />
+    FROM
+      person
+    <where>
+      <if test="name != null">
+      AND name = #{name, mode=IN, javaType=String, jdbcType=VARCHAR}
+      </if>
+      <if test="age != null">
+      AND age = #{age, mode=IN, javaType=Integer, jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
 
 </mapper>

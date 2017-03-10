@@ -12,8 +12,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
+import org.apache.ibatis.type.TypeAliasRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.coatli.java.domain.Person;
+import net.coatli.java.event.RequestAllPersonsEvent;
+import net.coatli.java.mapper.PersonMapper;
 
 public final class MyBatisConfig {
 
@@ -27,9 +32,6 @@ public final class MyBatisConfig {
   private static final String DATASOURCE_URL      = "datasource.url";
   private static final String DATASOURCE_USERNAME = "datasource.username";
   private static final String DATASOURCE_PASSWORD = "datasource.password";
-
-  private static final String ALIASES_PACKAGE_NAME = "mybatis.aliases";
-  private static final String MAPPER_PACKAGE_NAME  = "mybatis.mappers";
 
   private static final String DEFAULT_ENVIRONMENT = "production";
 
@@ -57,6 +59,36 @@ public final class MyBatisConfig {
     return new SqlSessionFactoryBuilder().build(configuration());
   }
 
+  private Configuration configuration() {
+    final Configuration configuration = new Configuration(environment());
+
+    registerAliases(configuration.getTypeAliasRegistry());
+
+    addMappers(configuration);
+
+    return configuration;
+  }
+
+  private void registerAliases(final TypeAliasRegistry typeAliasRegistry) {
+
+    typeAliasRegistry.registerAlias("Person", Person.class);
+    typeAliasRegistry.registerAlias("RequestAllPersonsEvent", RequestAllPersonsEvent.class);
+
+  }
+
+  private void addMappers(final Configuration configuration) {
+
+    configuration.addMapper(PersonMapper.class);
+  }
+
+  private Environment environment() {
+    return new Environment(DEFAULT_ENVIRONMENT, transactionFactory(), dataSource());
+  }
+
+  private TransactionFactory transactionFactory() {
+    return new JdbcTransactionFactory();
+  }
+
   private DataSource dataSource() {
     final BasicDataSource dataSource = new BasicDataSource();
 
@@ -66,26 +98,6 @@ public final class MyBatisConfig {
     dataSource.setPassword(properties.getProperty(DATASOURCE_PASSWORD));
 
     return dataSource;
-  }
-
-  private TransactionFactory transactionFactory() {
-    return new JdbcTransactionFactory();
-  }
-
-  private Environment environment() {
-    return new Environment(DEFAULT_ENVIRONMENT, transactionFactory(), dataSource());
-  }
-
-  private Configuration configuration() {
-    final Configuration configuration = new Configuration(environment());
-
-    configuration.getTypeAliasRegistry().registerAliases(
-        properties.getProperty(ALIASES_PACKAGE_NAME));
-
-    configuration.addMappers(
-        properties.getProperty(MAPPER_PACKAGE_NAME));
-
-    return configuration;
   }
 
 }
