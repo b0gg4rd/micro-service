@@ -49,7 +49,7 @@
     </dependency>
     <dependency>
       <groupId>ro.pippo</groupId>
-      <artifactId>pippo-jetty</artifactId>
+      <artifactId>pippo-undertow</artifactId>
       <version>${pippo.version}</version>
     </dependency>
     <dependency>

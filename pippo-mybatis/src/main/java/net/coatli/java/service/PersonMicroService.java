@@ -8,7 +8,7 @@ import net.coatli.java.PippoMyBatisApplication;
 import net.coatli.java.domain.Person;
 import net.coatli.java.events.ResponseAllPersonsEvent;
 import net.coatli.java.events.ResponsePersonEvent;
-import net.coatli.java.persistence.PersonMapper;
+import net.coatli.java.mapper.PersonMapper;
 import ro.pippo.core.route.RouteGroup;
 
 public class PersonMicroService extends RouteGroup {

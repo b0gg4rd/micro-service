@@ -1,4 +1,4 @@
-package net.coatli.java.persistence;
+package net.coatli.java.mapper;
 
 import java.util.List;
 
