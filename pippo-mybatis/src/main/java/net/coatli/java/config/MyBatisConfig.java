@@ -13,46 +13,24 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.type.TypeAliasRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.coatli.java.domain.Person;
-import net.coatli.java.event.RequestAllPersonsEvent;
-import net.coatli.java.mapper.PersonMapper;
+import net.coatli.java.persistence.PersonMapper;
+import ro.pippo.core.PippoSettings;
 
-public final class MyBatisConfig {
+public class MyBatisConfig {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MyBatisConfig.class);
-
-  private static final MyBatisConfig INSTANCE = new MyBatisConfig();
-
-  private static final String APPLICATION_PROPERTIES = "/conf/application.properties";
+  private static final String DEFAULT_ENVIRONMENT = "production";
 
   private static final String DATASOURCE_DRIVER   = "datasource.driver";
   private static final String DATASOURCE_URL      = "datasource.url";
   private static final String DATASOURCE_USERNAME = "datasource.username";
   private static final String DATASOURCE_PASSWORD = "datasource.password";
 
-  private static final String DEFAULT_ENVIRONMENT = "production";
+  private final PippoSettings pippoSettings;
 
-  private final Properties properties;
-
-  private MyBatisConfig(){
-    properties = new Properties();
-
-    try {
-      properties.load(MyBatisConfig.class.getResourceAsStream(APPLICATION_PROPERTIES));
-    } catch (final IOException exc) {
-      throw new RuntimeException("Error reading application.properties", exc);
-    }
-
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Configuring MyBatis with: {}", properties);
-    }
-  }
-
-  public static MyBatisConfig getInstance() {
-    return INSTANCE;
+  public MyBatisConfig(final PippoSettings pippoSettings) {
+    this.pippoSettings = pippoSettings;
   }
 
   public SqlSessionFactory sqlSessionFactory() {
@@ -70,14 +48,10 @@ public final class MyBatisConfig {
   }
 
   private void registerAliases(final TypeAliasRegistry typeAliasRegistry) {
-
     typeAliasRegistry.registerAlias("Person", Person.class);
-    typeAliasRegistry.registerAlias("RequestAllPersonsEvent", RequestAllPersonsEvent.class);
-
   }
 
   private void addMappers(final Configuration configuration) {
-
     configuration.addMapper(PersonMapper.class);
   }
 
@@ -92,10 +66,10 @@ public final class MyBatisConfig {
   private DataSource dataSource() {
     final BasicDataSource dataSource = new BasicDataSource();
 
-    dataSource.setDriverClassName(properties.getProperty(DATASOURCE_DRIVER));
-    dataSource.setUrl(properties.getProperty(DATASOURCE_URL));
-    dataSource.setUsername(properties.getProperty(DATASOURCE_USERNAME));
-    dataSource.setPassword(properties.getProperty(DATASOURCE_PASSWORD));
+    dataSource.setDriverClassName(pippoSettings.getString(DATASOURCE_DRIVER, null));
+    dataSource.setUrl(pippoSettings.getString(DATASOURCE_URL, null));
+    dataSource.setUsername(pippoSettings.getString(DATASOURCE_USERNAME, null));
+    dataSource.setPassword(pippoSettings.getString(DATASOURCE_PASSWORD, null));
 
     return dataSource;
   }
