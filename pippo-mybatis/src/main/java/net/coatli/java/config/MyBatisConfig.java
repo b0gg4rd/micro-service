@@ -12,6 +12,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.type.TypeAliasRegistry;
 
 import net.coatli.java.domain.Person;
+import net.coatli.java.event.RequestAllPersonsEvent;
 import net.coatli.java.mapper.PersonMapper;
 import ro.pippo.core.PippoSettings;
 
@@ -46,6 +47,7 @@ public class MyBatisConfig {
 
   private void registerAliases(final TypeAliasRegistry typeAliasRegistry) {
     typeAliasRegistry.registerAlias("Person", Person.class);
+    typeAliasRegistry.registerAlias("RequestAllPersonsEvent", RequestAllPersonsEvent.class);
   }
 
   private void addMappers(final Configuration configuration) {

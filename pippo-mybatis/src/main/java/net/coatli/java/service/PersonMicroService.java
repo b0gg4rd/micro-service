@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.coatli.java.config.MyBatisConfig;
 import net.coatli.java.domain.Person;
@@ -14,8 +12,6 @@ import net.coatli.java.mapper.PersonMapper;
 import ro.pippo.core.Application;
 
 public class PersonMicroService extends Application {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(PersonMicroService.class);
 
   private static final String SQL_SESSION = "sqlSession";
 
