@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import net.coatli.java.config.MyBatisConfig;
 import net.coatli.java.domain.Person;
-import net.coatli.java.persistence.PersonMapper;
+import net.coatli.java.event.RequestAllPersonsEvent;
+import net.coatli.java.mapper.PersonMapper;
 import ro.pippo.core.Application;
 
 public class PersonMicroService extends Application {
@@ -73,6 +74,18 @@ public class PersonMicroService extends Application {
     GET("/persons/", (routeContext) -> {
       final SqlSession sqlSession = routeContext.getLocal(SQL_SESSION);
       final List<Person> persons = sqlSession.getMapper(PersonMapper.class).findAll();
+      if (persons.isEmpty()) {
+        routeContext.status(204);
+      } else {
+        routeContext.json().send(persons);
+      }
+    });
+
+    // findBy
+    GET("/persons", (routeContext) -> {
+      final SqlSession sqlSession = routeContext.getLocal(SQL_SESSION);
+      final List<Person> persons = sqlSession.getMapper(PersonMapper.class).findBy(
+          routeContext.createEntityFromBody(RequestAllPersonsEvent.class));
       if (persons.isEmpty()) {
         routeContext.status(204);
       } else {

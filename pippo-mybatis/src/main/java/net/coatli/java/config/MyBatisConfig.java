@@ -1,8 +1,5 @@
 package net.coatli.java.config;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -15,7 +12,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.type.TypeAliasRegistry;
 
 import net.coatli.java.domain.Person;
-import net.coatli.java.persistence.PersonMapper;
+import net.coatli.java.mapper.PersonMapper;
 import ro.pippo.core.PippoSettings;
 
 public class MyBatisConfig {
