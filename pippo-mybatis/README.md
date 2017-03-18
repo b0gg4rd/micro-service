@@ -17,3 +17,7 @@ For execute use:
 
 `$ ./mvnw clean package exec:exec`
 
+For integration test use:
+
+`$ ./mvnw clean verify`
+
