@@ -12,11 +12,11 @@ public interface PersonMapper {
 
   public int create(Person person);
 
-  public Person retrieve(Long key);
+  public Person retrieve(String key);
 
   public int update(Person person);
 
-  public int delete(Long key);
+  public int delete(String key);
 
   public List<Person> findAll();
 

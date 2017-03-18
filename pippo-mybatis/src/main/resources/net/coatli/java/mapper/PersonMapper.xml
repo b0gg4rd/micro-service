@@ -5,11 +5,18 @@
 
 <mapper namespace="net.coatli.java.mapper.PersonMapper">
 
+  <resultMap id="retrieveResultMap" type="Person">
+    <result property="key"      javaType="string"  column="id"       jdbcType="VARCHAR" />
+    <result property="name"     javaType="string"  column="name"     jdbcType="VARCHAR" />
+    <result property="birthDay" javaType="date"    column="birthday" jdbcType="DATE" />
+    <result property="age"      javaType="integer" column="age"      jdbcType="INTEGER" />
+  </resultMap>
+
   <sql id="allColumns">
-    id       AS "key",
-    name     AS name,
-    birthday AS birthDay,
-    age      AS age
+    id,
+    name,
+    birthday,
+    age
   </sql>
 
   <insert id="create"
@@ -17,33 +24,54 @@
     INSERT INTO
       person
     (
-      id,
-      name,
-      birthday,
-      age
+      id
+      <if test="name != null">,name</if>
+      <if test="birthDay != null">,birthday</if>
+      <if test="age != null">,age</if>
     )
     VALUES
     (
-      #{key,      mode=IN, javaType=Long,    jdbcType=INTEGER},
-      #{name,     mode=IN, javaType=String,  jdbcType=VARCHAR},
-      #{birthDay, mode=IN, javaType=Date,    jdbcType=DATE},
-      #{age,      mode=IN, javaType=Integer, jdbcType=INTEGER}
+      #{key, mode=IN, javaType=String, jdbcType=VARCHAR}
+      <if test="name != null">,#{name, mode=IN, javaType=String, jdbcType=VARCHAR}</if>
+      <if test="birthDay != null">,#{birthDay, mode=IN, javaType=Date, jdbcType=DATE}</if>
+      <if test="age != null">,#{age, mode=IN, javaType=Integer, jdbcType=INTEGER}</if>
     )
   </insert>
   
   <select id="retrieve"
-          parameterType="Long"
-          resultType="Person">
+          parameterType="String"
+          resultMap="retrieveResultMap">
     SELECT
     <include refid="allColumns" />
     FROM
       person
     WHERE
-      id = #{key, mode=IN, javaType=Long, jdbcType=INTEGER}
+      id = #{key, mode=IN, javaType=String, jdbcType=VARCHAR}
   </select>
+  
+  <update id="update"
+          parameterType="Person">
+    UPDATE
+      person
+    <set>
+      <if test="name != null">name = #{name, mode=IN, javaType=String, jdbcType=VARCHAR},</if>
+      <if test="birthDay != null">birthday = #{birthDay, mode=IN, javaType=Data, jdbcType=DATE},</if>
+      <if test="age != null">age = #{age, mode=IN, javaType=Integer, jdbcType=INTEGER}</if>
+    </set>
+    WHERE
+      id = #{key, mode=IN, javaType=String, jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="delete"
+          parameterType="String">
+    DELETE FROM
+      person
+    WHERE
+      id = #{key, mode=IN, javaType=String, jdbcType=VARCHAR}
+  </delete>
 
   <select id="findAll"
-          resultType="Person">
+          resultMap="retrieveResultMap">
     SELECT
     <include refid="allColumns" />
     FROM
@@ -52,7 +80,7 @@
   
   <select id="findBy"
           parameterType="RequestAllPersonsEvent"
-          resultType="Person">
+          resultMap="retrieveResultMap">
     SELECT
     <include refid="allColumns" />
     FROM

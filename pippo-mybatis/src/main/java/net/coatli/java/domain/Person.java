@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Person {
 
-  private Long    key;
+  private String  key;
   private String  name;
   private Date    birthDay;
   private Integer age;
@@ -17,11 +17,11 @@ public class Person {
   public Person() {
   }
 
-  public Long getKey() {
+  public String getKey() {
     return key;
   }
 
-  public Person setKey(final Long key) {
+  public Person setKey(final String key) {
     this.key = key;
 
     return this;
@@ -65,9 +65,6 @@ public class Person {
 
   @Override
   public boolean equals(final Object other) {
-    if (this == other) {
-      return true;
-    }
     if (!(other instanceof Person)) {
       return false;
     }

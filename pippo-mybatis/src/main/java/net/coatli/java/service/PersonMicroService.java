@@ -1,6 +1,7 @@
 package net.coatli.java.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -10,40 +11,51 @@ import net.coatli.java.domain.Person;
 import net.coatli.java.event.RequestAllPersonsEvent;
 import net.coatli.java.mapper.PersonMapper;
 import ro.pippo.core.Application;
+import ro.pippo.core.HttpConstants;
 
 public class PersonMicroService extends Application {
 
+  private static final int NO_CONTENT = 204;
+
   private static final String SQL_SESSION = "sqlSession";
 
-  private SqlSessionFactory sqlSessionFactory;
+  private static final String PERSON_MAPPER = "personMapper";
 
   @Override
   protected void onInit() {
 
-    this.sqlSessionFactory = new MyBatisConfig(getPippoSettings()).sqlSessionFactory();
+    final SqlSessionFactory sqlSessionFactory = new MyBatisConfig(getPippoSettings()).sqlSessionFactory();
 
     // open sqlsession
     ALL("/.*", (routeContext) -> {
-      final PersonMicroService personMicroService = routeContext.getApplication();
-      routeContext.setLocal(SQL_SESSION, personMicroService.getSqlSessionFactory().openSession());
+      final SqlSession sqlSession = sqlSessionFactory.openSession();
+
+      routeContext.setLocal(SQL_SESSION, sqlSession);
+      routeContext.setLocal(PERSON_MAPPER, sqlSession.getMapper(PersonMapper.class));
+
       routeContext.next();
     });
 
     // create
     POST("/persons/", (routeContext) -> {
       final SqlSession sqlSession = routeContext.getLocal(SQL_SESSION);
-      sqlSession.getMapper(PersonMapper.class).create(routeContext.createEntityFromBody(Person.class));
+      final PersonMapper personMapper = routeContext.getLocal(PERSON_MAPPER);
+
+      final Person person = routeContext.createEntityFromBody(Person.class).setKey(UUID.randomUUID().toString());
+
+      personMapper.create(person);
       sqlSession.commit();
-      routeContext.getResponse().created();
+
+      routeContext.status(HttpConstants.StatusCode.CREATED).json().send(person);
     });
 
     // retrieve
     GET("/persons/{key}", (routeContext) -> {
-      final SqlSession sqlSession = routeContext.getLocal(SQL_SESSION);
-      final Person person = sqlSession.getMapper(PersonMapper.class).retrieve(
-          routeContext.getParameter("key").toLong());
+      final PersonMapper personMapper = routeContext.getLocal(PERSON_MAPPER);
+      final Person person = personMapper.retrieve(routeContext.getParameter("key").toString());
+
       if (person == null) {
-        routeContext.status(204);
+        routeContext.status(NO_CONTENT);
       } else {
         routeContext.json().send(person);
       }
@@ -52,26 +64,34 @@ public class PersonMicroService extends Application {
     // update
     PUT("/persons/{key}", (routeContext) -> {
       final SqlSession sqlSession = routeContext.getLocal(SQL_SESSION);
-      sqlSession.getMapper(PersonMapper.class).update(
-          routeContext.createEntityFromBody(Person.class).setKey(routeContext.getParameter("key").toLong()));
+      final PersonMapper personMapper = routeContext.getLocal(PERSON_MAPPER);
+
+      personMapper.update(
+          routeContext.createEntityFromBody(Person.class).setKey(routeContext.getParameter("key").toString()));
       sqlSession.commit();
-      routeContext.status(204);
+
+      routeContext.status(NO_CONTENT);
     });
 
     // delete
     DELETE("/persons/{key}", (routeContext) -> {
       final SqlSession sqlSession = routeContext.getLocal(SQL_SESSION);
-      sqlSession.getMapper(PersonMapper.class).delete(routeContext.getParameter("key").toLong());
+      final PersonMapper personMapper = routeContext.getLocal(PERSON_MAPPER);
+
+      personMapper.delete(routeContext.getParameter("key").toString());
       sqlSession.commit();
-      routeContext.status(204);
+
+      routeContext.status(NO_CONTENT);
     });
 
     // findAll
     GET("/persons/", (routeContext) -> {
-      final SqlSession sqlSession = routeContext.getLocal(SQL_SESSION);
-      final List<Person> persons = sqlSession.getMapper(PersonMapper.class).findAll();
+      final PersonMapper personMapper = routeContext.getLocal(PERSON_MAPPER);
+
+      final List<Person> persons = personMapper.findAll();
+
       if (persons.isEmpty()) {
-        routeContext.status(204);
+        routeContext.status(NO_CONTENT);
       } else {
         routeContext.json().send(persons);
       }
@@ -79,11 +99,13 @@ public class PersonMicroService extends Application {
 
     // findBy
     GET("/persons", (routeContext) -> {
-      final SqlSession sqlSession = routeContext.getLocal(SQL_SESSION);
-      final List<Person> persons = sqlSession.getMapper(PersonMapper.class).findBy(
-          routeContext.createEntityFromBody(RequestAllPersonsEvent.class));
+      final PersonMapper personMapper = routeContext.getLocal(PERSON_MAPPER);
+
+      final List<Person> persons = personMapper.findBy(
+          routeContext.createEntityFromParameters(RequestAllPersonsEvent.class));
+
       if (persons.isEmpty()) {
-        routeContext.status(204);
+        routeContext.status(NO_CONTENT);
       } else {
         routeContext.json().send(persons);
       }
@@ -93,12 +115,8 @@ public class PersonMicroService extends Application {
     ALL("/.*", (routeContext) -> {
       final SqlSession sqlSession = routeContext.removeLocal(SQL_SESSION);
       sqlSession.close();
-    }).runAsFinally();;
+    }).runAsFinally();
 
-  }
-
-  public SqlSessionFactory getSqlSessionFactory() {
-    return sqlSessionFactory;
   }
 
 }
