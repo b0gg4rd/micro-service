@@ -20,7 +20,7 @@ import org.junit.Test;
 
 public class PersonMicroServiceIT {
 
-  private static final int NOT_STRING_FOUND = -1;
+  private static final int STRING_NOT_FOUND = -1;
 
   private static final String API_PERSONS = "http://localhost:8338/api/persons/";
 
@@ -79,7 +79,7 @@ public class PersonMicroServiceIT {
 
     // then
     try {
-      assertTrue(EntityUtils.toString(response.getEntity()).indexOf(PERSON_KEY) != NOT_STRING_FOUND);
+      assertTrue(EntityUtils.toString(response.getEntity()).indexOf(PERSON_KEY) != STRING_NOT_FOUND);
     } finally {
       response.close();
     }
