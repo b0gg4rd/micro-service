@@ -20,11 +20,9 @@ import org.junit.Test;
 
 public class PersonMicroServiceIT {
 
-  private static final int STRING_NOT_FOUND = -1;
-
-  private static final String API_PERSONS = "http://localhost:8338/api/persons/";
-
-  private static final String PERSON_KEY = "2884685b-b262-41e2-93a7-669d6be25243";
+  private static final int    STRING_NOT_FOUND = -1;
+  private static final String API_PERSONS      = "http://localhost:8338/api/persons/";
+  private static final String PERSON_KEY       = "2884685b-b262-41e2-93a7-669d6be25243";
 
   private CloseableHttpClient httpClient;
 
@@ -33,6 +31,12 @@ public class PersonMicroServiceIT {
     this.httpClient = HttpClients.createDefault();
   }
 
+  /**
+   * Create with valid entity works.
+   *
+   * @throws ClientProtocolException
+   * @throws IOException
+   */
   @Test
   public void thatCreateWorks() throws ClientProtocolException, IOException {
     // given
@@ -48,6 +52,23 @@ public class PersonMicroServiceIT {
     // then
     try {
       assertTrue(response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED);
+    } finally {
+      response.close();
+    }
+  }
+
+  @Test
+  public void thatCreateWithBadEntityReturnBadRequestWorks() throws ClientProtocolException, IOException {
+    // given
+    final HttpPost request = new HttpPost(API_PERSONS);
+    request.setEntity(new StringEntity("", ContentType.create("application/json", "UTF-8")));
+
+    // when
+    final CloseableHttpResponse response = httpClient.execute(request);
+
+    // then
+    try {
+      assertTrue(response.getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST);
     } finally {
       response.close();
     }
@@ -71,7 +92,7 @@ public class PersonMicroServiceIT {
 
   @Test
   public void thatRetrieveReturnNotEmptyEntityWorks() throws ClientProtocolException, IOException {
- // given
+    // given
     final HttpGet request = new HttpGet(API_PERSONS + PERSON_KEY);
 
     // when
@@ -86,8 +107,23 @@ public class PersonMicroServiceIT {
   }
 
   @Test
-  public void thatFindAllReturnOKWorks()
-      throws ClientProtocolException, IOException {
+  public void thatRetrieveWithEmptyKeyReturnBadRequestWorks() throws ClientProtocolException, IOException {
+    // given
+    final HttpGet request = new HttpGet(API_PERSONS);
+
+    // when
+    final CloseableHttpResponse response = httpClient.execute(request);
+
+    // then
+    try {
+      assertTrue(response.getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST);
+    } finally {
+      response.close();
+    }
+  }
+
+  @Test
+  public void thatFindAllReturnOkWorks() throws ClientProtocolException, IOException {
     // given
     final HttpGet request = new HttpGet(API_PERSONS);
 

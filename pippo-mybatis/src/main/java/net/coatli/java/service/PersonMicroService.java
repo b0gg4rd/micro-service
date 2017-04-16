@@ -21,31 +21,39 @@ public class PersonMicroService extends Application {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PersonMicroService.class);
 
-  private static final String CREATE_PATH   = "/persons/";
-  private static final String RETRIEVE_PATH = "/persons/{key}";
-  private static final String UPDATE_PATH   = "/persons/{key}";
-  private static final String DELETE_PATH   = "/persons/{key}";
-  private static final String FIND_ALL_PATH = "/persons/";
-  private static final String FIND_BY_PATH  = "/persons";
-
   private static final int SUCCESS_CREATE = 1;
   private static final int SUCCESS_UPDATE = 1;
   private static final int SUCCESS_DELETE = 1;
 
+  private SqlSessionFactory sqlSessionFactory;
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected void onInit() {
+    sqlSessionFactory = new MyBatisConfig(getPippoSettings()).sqlSessionFactory();
+    create();
+    retrieve();
+    update();
+    delete();
+    findAll();
+    findBy();
+  }
 
-    final SqlSessionFactory sqlSessionFactory = new MyBatisConfig(getPippoSettings()).sqlSessionFactory();
-
-    // create
-    POST(CREATE_PATH, (routeContext) -> {
+  /**
+   *
+   */
+  private void create() {
+    POST("/persons/", (routeContext) -> {
       Person person = null;
 
       try {
-        person = routeContext.createEntityFromBody(Person.class)
-                   .setKey(UUID.randomUUID().toString());
+       if ((person = routeContext.createEntityFromBody(Person.class)) == null) {
+         throw new PippoRuntimeException("Entity empty");
+       }
       } catch (final PippoRuntimeException exc) {
-        LOGGER.error("Incorrect resource.", exc);
+        LOGGER.error("Incorrect resource", exc);
         routeContext.status(HttpConstants.StatusCode.BAD_REQUEST);
         return ;
       }
@@ -53,7 +61,7 @@ public class PersonMicroService extends Application {
       final SqlSession sqlSession = sqlSessionFactory.openSession();
       final PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
 
-      if (SUCCESS_CREATE == personMapper.create(person)) {
+      if (SUCCESS_CREATE == personMapper.create(person.setKey(UUID.randomUUID().toString()))) {
         sqlSession.commit();
         routeContext.status(HttpConstants.StatusCode.CREATED).json().send(person);
       } else {
@@ -61,14 +69,18 @@ public class PersonMicroService extends Application {
         routeContext.status(HttpConstants.StatusCode.INTERNAL_ERROR);
       }
     });
+  }
 
-    // retrieve
-    GET(RETRIEVE_PATH, (routeContext) -> {
+  /**
+   *
+   */
+  private void retrieve() {
+    GET("/persons/{key}", (routeContext) -> {
 
       final String key = routeContext.getParameter("key").toString();
 
       if (StringUtils.isBlank(key)) {
-        LOGGER.error("Incorrect key '{}'.", key);
+        LOGGER.error("Incorrect key '{}'", key);
         routeContext.status(HttpConstants.StatusCode.BAD_REQUEST);
         return ;
       }
@@ -84,9 +96,10 @@ public class PersonMicroService extends Application {
         routeContext.status(HttpConstants.StatusCode.OK).json().send(person);
       }
     });
+  }
 
-    // update
-    PUT(UPDATE_PATH, (routeContext) -> {
+  private void update() {
+    PUT("/persons/{key}", (routeContext) -> {
 
       Person person = null;
 
@@ -96,7 +109,7 @@ public class PersonMicroService extends Application {
             .setKey(routeContext.getParameter("key").toString());
 
         if (StringUtils.isBlank(person.getKey())) {
-          LOGGER.error("Incorrect key '{}'.", person.getKey());
+          LOGGER.error("Incorrect key '{}'", person.getKey());
           routeContext.status(HttpConstants.StatusCode.BAD_REQUEST);
           return ;
         }
@@ -117,13 +130,14 @@ public class PersonMicroService extends Application {
         routeContext.status(HttpConstants.StatusCode.INTERNAL_ERROR);
       }
     });
+  }
 
-    // delete
-    DELETE(DELETE_PATH, (routeContext) -> {
+  private void delete() {
+    DELETE("/persons/{key}", (routeContext) -> {
       final String key = routeContext.getParameter("key").toString();
 
       if (StringUtils.isBlank(key)) {
-        LOGGER.error("Incorrect key '{}'.", key);
+        LOGGER.error("Incorrect key '{}'", key);
         routeContext.status(HttpConstants.StatusCode.BAD_REQUEST);
         return ;
       }
@@ -139,9 +153,10 @@ public class PersonMicroService extends Application {
         routeContext.status(HttpConstants.StatusCode.INTERNAL_ERROR);
       }
     });
+  }
 
-    // findAll
-    GET(FIND_ALL_PATH, (routeContext) -> {
+  private void findAll() {
+    GET("/persons/", (routeContext) -> {
 
       final SqlSession sqlSession = sqlSessionFactory.openSession();
       final PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
@@ -154,15 +169,19 @@ public class PersonMicroService extends Application {
         routeContext.status(HttpConstants.StatusCode.OK).json().send(persons);
       }
     });
+  }
 
-    // findBy
-    GET(FIND_BY_PATH , (routeContext) -> {
+  /**
+   *
+   */
+  private void findBy() {
+    GET("/persons", (routeContext) -> {
       RequestAllPersonsEvent filters = null;
 
       try {
         filters = routeContext.createEntityFromParameters(RequestAllPersonsEvent.class);
       } catch(final PippoRuntimeException exc) {
-        LOGGER.error("Incorrect filters.", exc);
+        LOGGER.error("Incorrect filters", exc);
         routeContext.status(HttpConstants.StatusCode.BAD_REQUEST);
         return ;
       }
@@ -178,7 +197,6 @@ public class PersonMicroService extends Application {
         routeContext.status(HttpConstants.StatusCode.OK).json().send(persons);
       }
     });
-
   }
 
 }

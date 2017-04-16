@@ -17,7 +17,7 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <maven>3.3.9</maven>
+    <maven>3.5.0</maven>
     <main.class>net.coatli.java.PippoMyBatisApplication</main.class>
     
     <project.build.resourcesDirectory>${basedir}/src/main/resources</project.build.resourcesDirectory>
