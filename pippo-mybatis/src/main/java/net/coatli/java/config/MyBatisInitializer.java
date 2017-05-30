@@ -10,13 +10,18 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.type.TypeAliasRegistry;
+import org.kohsuke.MetaInfServices;
 
 import net.coatli.java.domain.Person;
 import net.coatli.java.event.RequestAllPersonsEvent;
 import net.coatli.java.mapper.PersonMapper;
+import net.coatli.java.service.PersonMicroService;
+import ro.pippo.core.Application;
+import ro.pippo.core.Initializer;
 import ro.pippo.core.PippoSettings;
 
-public class MyBatisConfig {
+@MetaInfServices
+public class MyBatisInitializer implements Initializer {
 
   private static final String DEFAULT_ENVIRONMENT = "production";
 
@@ -25,18 +30,24 @@ public class MyBatisConfig {
   private static final String DATASOURCE_USERNAME = "datasource.username";
   private static final String DATASOURCE_PASSWORD = "datasource.password";
 
-  private final PippoSettings pippoSettings;
+  @Override
+  public void init(final Application application) {
 
-  public MyBatisConfig(final PippoSettings pippoSettings) {
-    this.pippoSettings = pippoSettings;
+
+    ((PersonMicroService )application).setPersonMapper(
+        sqlSessionFactory(application.getPippoSettings()).openSession().getMapper(PersonMapper.class));
   }
 
-  public SqlSessionFactory sqlSessionFactory() {
-    return new SqlSessionFactoryBuilder().build(configuration());
+  @Override
+  public void destroy(final Application application) {
   }
 
-  private Configuration configuration() {
-    final Configuration configuration = new Configuration(environment());
+  private SqlSessionFactory sqlSessionFactory(final PippoSettings pippoSettings) {
+    return new SqlSessionFactoryBuilder().build(configuration(pippoSettings));
+  }
+
+  private Configuration configuration(final PippoSettings pippoSettings) {
+    final Configuration configuration = new Configuration(environment(pippoSettings));
 
     registerAliases(configuration.getTypeAliasRegistry());
 
@@ -54,15 +65,15 @@ public class MyBatisConfig {
     configuration.addMapper(PersonMapper.class);
   }
 
-  private Environment environment() {
-    return new Environment(DEFAULT_ENVIRONMENT, transactionFactory(), dataSource());
+  private Environment environment(final PippoSettings pippoSettings) {
+    return new Environment(DEFAULT_ENVIRONMENT, transactionFactory(), dataSource(pippoSettings));
   }
 
   private TransactionFactory transactionFactory() {
     return new JdbcTransactionFactory();
   }
 
-  private DataSource dataSource() {
+  private DataSource dataSource(final PippoSettings pippoSettings) {
     final BasicDataSource dataSource = new BasicDataSource();
 
     dataSource.setDriverClassName(pippoSettings.getString(DATASOURCE_DRIVER, null));

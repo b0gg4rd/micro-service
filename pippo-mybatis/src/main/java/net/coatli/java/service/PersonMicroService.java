@@ -4,41 +4,49 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.coatli.java.config.MyBatisConfig;
 import net.coatli.java.domain.Person;
 import net.coatli.java.event.RequestAllPersonsEvent;
 import net.coatli.java.mapper.PersonMapper;
 import ro.pippo.core.Application;
 import ro.pippo.core.HttpConstants;
 import ro.pippo.core.PippoRuntimeException;
+import ro.pippo.fastjson.FastjsonEngine;
 
 public class PersonMicroService extends Application {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PersonMicroService.class);
 
-  private static final int SUCCESS_CREATE = 1;
-  private static final int SUCCESS_UPDATE = 1;
-  private static final int SUCCESS_DELETE = 1;
+  private PersonMapper personMapper;
 
-  private SqlSessionFactory sqlSessionFactory;
+  public PersonMicroService setPersonMapper(final PersonMapper personMapper) {
+    this.personMapper = personMapper;
+
+    return this;
+  }
 
   /**
    * {@inheritDoc}
    */
   @Override
   protected void onInit() {
-    sqlSessionFactory = new MyBatisConfig(getPippoSettings()).sqlSessionFactory();
+
+    registerContentTypeEngine(FastjsonEngine.class);
+
     create();
+
     retrieve();
+
     update();
+
     delete();
+
     findAll();
+
     findBy();
+
   }
 
   /**
@@ -50,24 +58,16 @@ public class PersonMicroService extends Application {
 
       try {
        if ((person = routeContext.createEntityFromBody(Person.class)) == null) {
-         throw new PippoRuntimeException("Entity empty");
+         throw new PippoRuntimeException("Empty entity");
        }
       } catch (final PippoRuntimeException exc) {
-        LOGGER.error("Incorrect resource", exc);
+        LOGGER.error("", exc);
         routeContext.status(HttpConstants.StatusCode.BAD_REQUEST);
         return ;
       }
 
-      final SqlSession sqlSession = sqlSessionFactory.openSession();
-      final PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-
-      if (SUCCESS_CREATE == personMapper.create(person.setKey(UUID.randomUUID().toString()))) {
-        sqlSession.commit();
-        routeContext.status(HttpConstants.StatusCode.CREATED).json().send(person);
-      } else {
-        sqlSession.rollback();
-        routeContext.status(HttpConstants.StatusCode.INTERNAL_ERROR);
-      }
+      personMapper.create(person.setKey(UUID.randomUUID().toString()));
+      routeContext.status(HttpConstants.StatusCode.CREATED).json().send(person);
     });
   }
 
@@ -80,13 +80,10 @@ public class PersonMicroService extends Application {
       final String key = routeContext.getParameter("key").toString();
 
       if (StringUtils.isBlank(key)) {
-        LOGGER.error("Incorrect key '{}'", key);
+        LOGGER.error("The key must not be empty '{}'", key);
         routeContext.status(HttpConstants.StatusCode.BAD_REQUEST);
         return ;
       }
-
-      final SqlSession sqlSession = sqlSessionFactory.openSession();
-      final PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
 
       final Person person = personMapper.retrieve(key);
 
@@ -98,6 +95,9 @@ public class PersonMicroService extends Application {
     });
   }
 
+  /**
+   *
+   */
   private void update() {
     PUT("/persons/{key}", (routeContext) -> {
 
@@ -119,19 +119,14 @@ public class PersonMicroService extends Application {
         return ;
       }
 
-      final SqlSession sqlSession = sqlSessionFactory.openSession();
-      final PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-
-      if (SUCCESS_UPDATE == personMapper.update(person)) {
-        sqlSession.commit();
-        routeContext.status(HttpConstants.StatusCode.NO_RESPONSE);
-      } else {
-        sqlSession.rollback();
-        routeContext.status(HttpConstants.StatusCode.INTERNAL_ERROR);
-      }
+      personMapper.update(person);
+      routeContext.status(HttpConstants.StatusCode.NO_RESPONSE);
     });
   }
 
+  /**
+   *
+   */
   private void delete() {
     DELETE("/persons/{key}", (routeContext) -> {
       final String key = routeContext.getParameter("key").toString();
@@ -142,24 +137,16 @@ public class PersonMicroService extends Application {
         return ;
       }
 
-      final SqlSession sqlSession = sqlSessionFactory.openSession();
-      final PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-
-      if (SUCCESS_DELETE == personMapper.delete(key)) {
-        sqlSession.commit();
-        routeContext.status(HttpConstants.StatusCode.NO_RESPONSE);
-      } else {
-        sqlSession.rollback();
-        routeContext.status(HttpConstants.StatusCode.INTERNAL_ERROR);
-      }
+      personMapper.delete(key);
+      routeContext.status(HttpConstants.StatusCode.NO_RESPONSE);
     });
   }
 
+  /**
+   *
+   */
   private void findAll() {
     GET("/persons/", (routeContext) -> {
-
-      final SqlSession sqlSession = sqlSessionFactory.openSession();
-      final PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
 
       final List<Person> persons = personMapper.findAll();
 
@@ -185,9 +172,6 @@ public class PersonMicroService extends Application {
         routeContext.status(HttpConstants.StatusCode.BAD_REQUEST);
         return ;
       }
-
-      final SqlSession sqlSession = sqlSessionFactory.openSession();
-      final PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
 
       final List<Person> persons = personMapper.findBy(filters);
 
