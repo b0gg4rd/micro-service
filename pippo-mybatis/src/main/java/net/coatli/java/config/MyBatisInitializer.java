@@ -32,10 +32,8 @@ public class MyBatisInitializer implements Initializer {
 
   @Override
   public void init(final Application application) {
-
-
     ((PersonMicroService )application).setPersonMapper(
-        sqlSessionFactory(application.getPippoSettings()).openSession().getMapper(PersonMapper.class));
+        sqlSessionFactory(application.getPippoSettings()).openSession(true).getMapper(PersonMapper.class));
   }
 
   @Override
