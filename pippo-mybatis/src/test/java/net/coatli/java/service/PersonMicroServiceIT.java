@@ -32,12 +32,6 @@ public class PersonMicroServiceIT {
     this.httpClient = HttpClients.createDefault();
   }
 
-  /**
-   * That create with a valid entity works.
-   *
-   * @throws ClientProtocolException
-   * @throws IOException
-   */
   @Test
   public void thatCreateWorks() throws ClientProtocolException, IOException {
     // given
