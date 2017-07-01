@@ -1,15 +1,14 @@
 # Micro Service
 
-A classic **microservice** some _microframeworks_:
+A classic **microservice** for the business domain Person with some _microframeworks_:
 
 - [Pippo](http://www.pippo.ro/)
 - [Spark Java Framework](http://sparkjava.com/)
+- [Rapidoid](http://www.rapidoid.org/)
 - [Spring Framework](https://spring.io/)
 
-Using some frameworks for relational data bases:
+For relational databases we use some frameworks like:
 
 - [MyBatis](http://www.pippo.ro/)
-- [Dada](http://sparkjava.com/)
-- [JPA](https://spring.io/)
-
+- [JPA](http://docs.oracle.com/javaee/6/tutorial/doc/bnbpz.html)
 
