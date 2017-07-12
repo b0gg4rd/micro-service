@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.4.RELEASE</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
+
+  <groupId>net.coatli.java</groupId>
+  <artifactId>spring-mybatis</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Spring - MyBatis</name>
+  <description>A microservice for the Person domain with Spring and MyBatis.</description>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <maven>3.5.0</maven>
+    <start-class>net.coatli.java.SpringMyBatisApplication</start-class>
+
+    <project.build.environment>prod</project.build.environment>
+    <project.build.resourcesDirectory>${basedir}/src/main/resources</project.build.resourcesDirectory>
+    <project.build.testResourcesDirectory>${basedir}/src/test/resources</project.build.testResourcesDirectory>
+    <project.build.filterDirectory>${basedir}/src/main/filters</project.build.filterDirectory>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.jdk.source>${java.version}</project.build.jdk.source>
+    <project.build.jdk.target>${java.version}</project.build.jdk.target>
+
+    <project.build.ut.skip>true</project.build.ut.skip>
+
+    <lifecycle.mapping.version>1.0.0</lifecycle.mapping.version>
+    <properties.maven.plugin.version>1.0.0</properties.maven.plugin.version>
+    <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+    <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
+    <maven.shade.plugin.version>2.1</maven.shade.plugin.version>
+    <exec.maven.plugin.version>1.5.0</exec.maven.plugin.version>
+    <maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
+
+    <mybatis.spring.boot.starter.version>1.3.0</mybatis.spring.boot.starter.version>
+    <mybatis.version>3.4.2</mybatis.version>
+    <commons.dbcp2.version>2.1.1</commons.dbcp2.version>
+    <commons.lang3.version>3.4</commons.lang3.version>
+    <metainf.services.version>1.7</metainf.services.version>
+
+    <junit.version>4.12</junit.version>
+    <httpclient.version>4.5.3</httpclient.version>
+    <jackson.databind.version>2.8.5</jackson.databind.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jetty</artifactId>
+    </dependency>
+    <dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+      <version>${mybatis.spring.boot.starter.version}</version>
+		</dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang3.version}</version>
+    </dependency>
+
+    <!-- Test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>${project.build.resourcesDirectory}</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${project.build.testResourcesDirectory}</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+    <filters>
+      <filter>${project.build.filterDirectory}/${project.build.environment}.properties</filter>
+    </filters>
+
+    <pluginManagement>
+      <plugins>
+        <!-- This plugin's configuration is used to store Eclipse m2e
+             settings only. It has no influence on the Maven build itself. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle.mapping.version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <versionRange>[${properties.maven.plugin.version},)</versionRange>
+                    <goals>
+                      <goal>read-project-properties</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <!-- Defining the plugin stack -->
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>${properties.maven.plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${project.build.filterDirectory}/${project.build.environment}.properties</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>local</id>
+
+      <properties>
+        <project.build.environment>local</project.build.environment>
+
+        <mysql.connector.java.version>5.1.6</mysql.connector.java.version>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>${mysql.connector.java.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+
+      <properties>
+        <project.build.environment>prod</project.build.environment>
+      </properties>
+    </profile>
+  </profiles>
+</project>
+
