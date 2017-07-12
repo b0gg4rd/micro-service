@@ -13,11 +13,10 @@ The first time just use:
 
 `$ mvn -N io.takari:maven:wrapper`
 
-For execute use:
+For execute with _local_ profile use:
 
-`$ ./mvnw clean package exec:exec`
+`$ ./mvnw clean package exec:exec -P local`
 
-For integration test use:
+For integration test with _local_ profile use:
 
-`$ ./mvnw clean verify`
-
+`$ ./mvnw clean verify -P local`

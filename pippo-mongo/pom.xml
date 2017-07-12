@@ -41,7 +41,7 @@
 
     <pippo.version>1.4.0</pippo.version>
     <slf4j.simple.version>1.7.7</slf4j.simple.version>
-    <mongo.java.driver.version>3.2.2</mongo.java.driver.version>
+    <mongo.java.driver.version>3.4.2</mongo.java.driver.version>
     <commons.dbcp2.version>2.1.1</commons.dbcp2.version>
     <commons.lang3.version>3.4</commons.lang3.version>
     <metainf.services.version>1.7</metainf.services.version>

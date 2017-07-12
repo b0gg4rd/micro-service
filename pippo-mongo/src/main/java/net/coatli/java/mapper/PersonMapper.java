@@ -13,4 +13,13 @@ public final class PersonMapper {
         .append("birthDay", person.getBirthDay())
         .append("age", person.getAge());
   }
+
+  public static final Person mapFromDocument(final BasicDBObject document) {
+
+    return new Person()
+        .setKey(document.getString("_id"))
+        .setName(document.getString("name"))
+        .setBirthDay(document.getDate("birthDay"))
+        .setAge(document.getInt("age"));
+  }
 }

@@ -6,9 +6,11 @@ import org.kohsuke.MetaInfServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import net.coatli.java.service.PersonMicroService;
 import ro.pippo.core.Application;
@@ -20,9 +22,8 @@ public class MongoInitializer implements Initializer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MongoInitializer.class);
 
-  private static final String MONGO_HOSTNAME   = "mongo.hostname";
-  private static final String MONGO_PORT       = "mongo.port";
-  private static final String MONGO_DB         = "mongo.db";
+  private static final String MONGO_URL        = "mongo.url";
+  private static final String MONGO_DATABASE   = "mongo.database";
   private static final String MONGO_COLLECTION = "mongo.collection";
   private static final String MONGO_USERNAME   = "mongo.username";
   private static final String MONGO_PASSWORD   = "mongo.password";
@@ -30,7 +31,7 @@ public class MongoInitializer implements Initializer {
   @Override
   public void init(final Application application) {
     try {
-      ((PersonMicroService )application).setDbCollection(dbCollection(application.getPippoSettings()));
+      ((PersonMicroService )application).setCollection(collection(application.getPippoSettings()));
     } catch (final UnknownHostException exc) {
       LOGGER.error("{}",exc);
     }
@@ -40,25 +41,22 @@ public class MongoInitializer implements Initializer {
   public void destroy(final Application application) {
   }
 
-  private DBCollection dbCollection(final PippoSettings pippoSettings) throws UnknownHostException {
+  private MongoCollection<DBObject> collection(final PippoSettings pippoSettings) throws UnknownHostException {
 
-    return db(pippoSettings).getCollection(pippoSettings.getString(MONGO_COLLECTION, null));
+    return database(pippoSettings).getCollection(pippoSettings.getString(MONGO_COLLECTION, null), DBObject.class);
 
   }
 
-  private DB db(final PippoSettings pippoSettings) throws UnknownHostException {
-    final DB db = mongoClient(pippoSettings).getDB(pippoSettings.getString(MONGO_DB, null));
+  private MongoDatabase database(final PippoSettings pippoSettings) throws UnknownHostException {
 
-    /*
-    db.authenticate(pippoSettings.getString(MONGO_USERNAME, null),
-        pippoSettings.getString(MONGO_PASSWORD, null).toCharArray());
-    */
+    return mongoClient(pippoSettings).getDatabase(pippoSettings.getString(MONGO_DATABASE, null));
 
-    return db;
   }
 
   private MongoClient mongoClient(final PippoSettings pippoSettings) throws UnknownHostException {
-    return new MongoClient(pippoSettings.getString(MONGO_HOSTNAME, null), pippoSettings.getInteger(MONGO_PORT, 0));
+
+    return new MongoClient(new MongoClientURI(pippoSettings.getString(MONGO_URL, null)));
+
   }
 
 }

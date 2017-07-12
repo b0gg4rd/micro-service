@@ -18,7 +18,7 @@ import org.junit.Test;
 
 public class PersonMicroServiceIT {
 
-  private static final String API_PERSONS      = "http://localhost:9081/api/persons/";
+  private static final String API_PERSONS = "http://localhost:9081/api/persons/";
 
   private CloseableHttpClient httpClient;
 
@@ -53,8 +53,25 @@ public class PersonMicroServiceIT {
     }
   }
 
+  @Test
   public void thatCreateWithBadEntityReturnBadRequestWorks() throws ClientProtocolException, IOException {
     // given
+    final HttpPost request = new HttpPost(API_PERSONS);
+    request.setEntity(new StringEntity("", ContentType.create("application/json", "UTF-8")));
+
+    // when
+    final CloseableHttpResponse response = httpClient.execute(request);
+
+    // then
+    try {
+      assertTrue(response.getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST);
+    } finally {
+      response.close();
+    }
+  }
+
+  public void thatRetrieveWorks() throws ClientProtocolException, IOException {
+ // given
     final HttpPost request = new HttpPost(API_PERSONS);
     request.setEntity(new StringEntity("", ContentType.create("application/json", "UTF-8")));
 
