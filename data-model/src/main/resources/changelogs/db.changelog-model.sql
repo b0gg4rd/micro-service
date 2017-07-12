@@ -10,4 +10,3 @@ CREATE TABLE person (
   age      INT          NULL,
   PRIMARY KEY (id)
 );
-

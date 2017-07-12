@@ -20,9 +20,11 @@ For drop all objects and reconstruct the database use the parameter **liquibase.
 
 `$ ./mvnw clean resources:resources liquibase:update -Dliquibase.dropFirst=true`
 
-If you have [Docker](https://docker.io/) use:
+If you have [Docker](https://docker.io/) you can use:
 
-`S docker run -d -p 3306:3306 --name mariadb-local mariadb:10.0.26`
+`$ docker run -d --name mariadb -p 3306:3306 -e MYSQL_ROOT_PASSWORD=XXXXX mariadb:10.0.26`
+
+Change _XXXXX_ with your root password.
 
 And create the database with:
 

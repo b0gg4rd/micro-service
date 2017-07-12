@@ -11,11 +11,9 @@
 
   <changeSet id="person-data" author="b0gg4rd">
     <comment>Load with testing data for person table</comment>
-    <loadData tableName="person"
-      file="test/person.csv">
+    <loadData tableName="person" file="test/person.csv">
       <column name="birthday" type="DATE" />
     </loadData>
   </changeSet>
 
 </databaseChangeLog>
-

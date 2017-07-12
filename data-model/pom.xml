@@ -19,7 +19,7 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <maven>3.3.9</maven>
+    <maven>3.5.0</maven>
 
     <lifecycle.mapping.version>1.0.0</lifecycle.mapping.version>
     <properties.maven.plugin.version>1.0.0</properties.maven.plugin.version>
