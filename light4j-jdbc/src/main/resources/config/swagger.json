@@ -1,0 +1,44 @@
+{"basePath": "/api/v1","paths":{"/persons/":{"get":{"summary": "Get all Persons resources","description": "Returns a list containing Persons","responses":{"200":{"schema": {
+              "$ref": "#/definitions/ResponseAllPersonsEvent"
+            },"description": "A ResponseAllPersonsEvent"}},"security": [
+          {
+            "ApiSecurity": [
+              "read_resource"
+            ]
+          }
+        ],"parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of persons returned",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "age",
+            "in": "query",
+            "description": "Age filter for search",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ]}},"/health":{"get":{"responses":{"200":{"description":"successful operation"}},"parameters":[]}},"/server/info":{"get":{"security":[{"ApiSecurity":["server.info.r"]}],"responses":{"200":{"description":"successful operation"}},"parameters":[]}}},"host": "localhost","produces": [
+    "application/json"
+  ],"schemes": [
+    "http"
+  ],"securityDefinitions":{"ApiSecurity":{"tokenUrl": "http://localhost:8888/oauth2/code","scopes":{"server.info.r":"read server info","read_resource": "read resource"},"type": "oauth2","flow": "application"}},"definitions":{"Person":{"properties":{"name":{"type": "string"},"birthday":{"type": "string","format": "date"},"key":{"type": "string"},"age":{"type": "integer"}}},"ResponseAllPersonsEvent":{"properties":{"persons":{"type": "array","items":{"$ref": "#/definitions/Person"}}}}},"swagger": "2.0","info": {
+    "version": "0.1.0-SNAPSHOT",
+    "title": "Person API",
+    "description": "A microservice for the Person resource with Undertow and JDBC"
+  },"consumes": [
+    "application/json"
+  ]}

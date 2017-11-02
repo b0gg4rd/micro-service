@@ -1,0 +1,107 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "0.1.0-SNAPSHOT",
+    "title": "Person API",
+    "description": "A microservice for the Person resource with Undertow and JDBC"
+  },
+  "host": "localhost",
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/api/v1",
+  "securityDefinitions": {
+    "ApiSecurity": {
+      "type": "oauth2",
+      "tokenUrl": "http://localhost:8888/oauth2/code",
+      "flow": "application",
+      "scopes": {
+        "read_resource": "read resource"
+      }
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "definitions": {
+    "Person": {
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string",
+          "format": "date"
+        },
+        "age": {
+          "type": "integer"
+        }
+      }
+    },
+    "ResponseAllPersonsEvent": {
+      "properties": {
+        "persons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Person"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/persons/": {
+      "get": {
+        "summary": "Get all Persons resources",
+        "description": "Returns a list containing Persons",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of persons returned",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "age",
+            "in": "query",
+            "description": "Age filter for search",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A ResponseAllPersonsEvent",
+            "schema": {
+              "$ref": "#/definitions/ResponseAllPersonsEvent"
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiSecurity": [
+              "read_resource"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
