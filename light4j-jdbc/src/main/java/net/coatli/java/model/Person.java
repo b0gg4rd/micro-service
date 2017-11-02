@@ -1,19 +1,20 @@
 
 package net.coatli.java.model;
 
+import java.time.LocalDate;
 import java.util.Objects;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Person {
 
-  private String              name;
-
-  private java.time.LocalDate birthday;
-
-  private String              key;
-
-  private Integer             age;
+  private String    name;
+  private LocalDate birthday;
+  private String    key;
+  private Integer   age;
 
   public Person() {
   }
@@ -85,25 +86,8 @@ public class Person {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("class Person {\n");
-
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    birthday: ").append(toIndentedString(birthday)).append("\n");
-    sb.append("    key: ").append(toIndentedString(key)).append("\n");
-    sb.append("    age: ").append(toIndentedString(age)).append("\n");
-    sb.append("}");
-    return sb.toString();
+    return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).appendSuper(super.toString()).append("name", name)
+        .append("birthday", birthday).append("key", key).append("age", age).toString();
   }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(final Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
 }

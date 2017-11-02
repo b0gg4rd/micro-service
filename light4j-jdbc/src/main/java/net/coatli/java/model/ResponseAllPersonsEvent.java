@@ -1,23 +1,27 @@
 
 package net.coatli.java.model;
 
+import java.util.List;
 import java.util.Objects;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResponseAllPersonsEvent {
 
-  private java.util.List<Person> persons;
+  private List<Person> persons;
 
   public ResponseAllPersonsEvent() {
   }
 
   @JsonProperty("persons")
-  public java.util.List<Person> getPersons() {
+  public List<Person> getPersons() {
     return persons;
   }
 
-  public ResponseAllPersonsEvent setPersons(final java.util.List<Person> persons) {
+  public ResponseAllPersonsEvent setPersons(final List<Person> persons) {
     this.persons = persons;
 
     return this;
@@ -43,22 +47,8 @@ public class ResponseAllPersonsEvent {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("class ResponseAllPersonsEvent {\n");
-
-    sb.append("    persons: ").append(toIndentedString(persons)).append("\n");
-    sb.append("}");
-    return sb.toString();
+    return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).appendSuper(super.toString()).append("persons", persons)
+        .toString();
   }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(final Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
 }

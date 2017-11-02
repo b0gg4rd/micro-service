@@ -43,6 +43,7 @@
     <version.fastscanner>2.0.8</version.fastscanner>
     <version.mysql>6.0.5</version.mysql>
     <versions.maven-version>2.4</versions.maven-version>
+    <commons.lang3.version>3.4</commons.lang3.version>
   </properties>
 
   <dependencies>
@@ -220,6 +221,11 @@
       <groupId>io.github.lukehutch</groupId>
       <artifactId>fast-classpath-scanner</artifactId>
       <version>${version.fastscanner}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang3.version}</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
