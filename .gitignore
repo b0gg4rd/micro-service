@@ -4,11 +4,6 @@
 ### Apache Maven ###
 target/
 
-### Maven Wrapper ###
-.mvn/
-mvnw
-mvnw.cmd
-
 ### STS ###
 .apt_generated
 .classpath
