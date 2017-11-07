@@ -28,7 +28,8 @@ public class PersonsGetHandler implements HttpHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PersonsGetHandler.class);
 
-  private static final DataSource DATA_SOURCE = new HikariDataSource(new HikariConfig("/datasource.properties"));
+  private static final String DATASOURCE_PROPERTIES = "/datasource.properties";
+  private static final DataSource DATA_SOURCE = new HikariDataSource(new HikariConfig(DATASOURCE_PROPERTIES));
 
   private static final int CORE_POOL_SIZE          = 600;
   private static final int MAXIMUM_POOL_SIZE       = 1200;

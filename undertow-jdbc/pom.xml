@@ -28,18 +28,23 @@
     <maven.shade.plugin.version>2.1</maven.shade.plugin.version>
     <exec.maven.plugin.version>1.5.0</exec.maven.plugin.version>
     
-    <slf4j.simple.version>1.7.7</slf4j.simple.version>
+    <undertow.core.version>1.4.21.Final</undertow.core.version>
+    <logback.classic.version>1.2.3</logback.classic.version>
     <mariadb.java.client.version>2.1.2</mariadb.java.client.version>
     <hikaricp.version>2.7.2</hikaricp.version>
     <commons.lang3.version>3.4</commons.lang3.version>
-    <undertow.core.version>1.4.21.Final</undertow.core.version>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.simple.version}</version>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-core</artifactId>
+      <version>${undertow.core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.classic.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
@@ -55,11 +60,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons.lang3.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.undertow</groupId>
-      <artifactId>undertow-core</artifactId>
-      <version>${undertow.core.version}</version>
     </dependency>
   </dependencies>
 
