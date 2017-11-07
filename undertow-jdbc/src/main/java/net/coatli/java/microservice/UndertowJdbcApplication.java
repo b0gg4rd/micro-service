@@ -1,5 +1,9 @@
 package net.coatli.java.microservice;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.xnio.Options;
 
 import io.undertow.Handlers;
@@ -12,19 +16,31 @@ import net.coatli.java.microservice.handler.PersonsGetHandler;
 
 public class UndertowJdbcApplication {
 
-  private static final String HOST = "0.0.0.0";
-  private static final int    PORT = 8080;
+  private static final String APPLICATION_PROPERTIES = "/conf/application.properties";
 
-  private static final int BACKLOG = 10000;
+  private static final String UNDERTOW_HOST  = "undertow.host";
+  private static final String UNDERTOW_PORT  = "undertow.port";
+  private static final int    IO_THREADS     = Runtime.getRuntime().availableProcessors() * 8;
+  private static final int    BUFFER_SIZE    = 1024 * 64;
+  private static final int    BACKLOG        = 10000;
+  private static final int    WORKER_THREADS = 1000;
 
-  private static final int WORKER_THREADS = 200;
+  public static void main(final String[] args) throws IOException {
+    final Properties applicationProperties = new Properties();
 
-  public static void main(final String[] args) {
+    try (InputStream inputStream = UndertowJdbcApplication.class.getResourceAsStream(APPLICATION_PROPERTIES)) {
+      if (inputStream == null) {
+        throw new RuntimeException("Can not find application.properties");
+      }
+      applicationProperties.load(inputStream);
+    }
 
     Undertow.builder()
-        .addHttpListener(PORT, HOST)
-        .setBufferSize(1024 * 16)
-        .setIoThreads(Runtime.getRuntime().availableProcessors() * 2)
+        .addHttpListener(
+            Integer.parseInt((String )applicationProperties.get(UNDERTOW_PORT)),
+            (String )applicationProperties.get(UNDERTOW_HOST))
+        .setBufferSize(BUFFER_SIZE)
+        .setIoThreads(IO_THREADS)
         .setSocketOption(Options.BACKLOG, BACKLOG)
         .setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false)
         .setServerOption(UndertowOptions.ALWAYS_SET_DATE, true)

@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jsoniter.output.JsonStream;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -28,13 +29,13 @@ public class PersonsGetHandler implements HttpHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PersonsGetHandler.class);
 
-  private static final String DATASOURCE_PROPERTIES = "/datasource.properties";
-  private static final DataSource DATA_SOURCE = new HikariDataSource(new HikariConfig(DATASOURCE_PROPERTIES));
+  private static final String     HIKARI_PROPERTIES = "/conf/hikari.properties";
+  private static final DataSource DATA_SOURCE       = new HikariDataSource(new HikariConfig(HIKARI_PROPERTIES));
 
-  private static final int CORE_POOL_SIZE          = 600;
-  private static final int MAXIMUM_POOL_SIZE       = 1200;
+  private static final int CORE_POOL_SIZE          = 1000;
+  private static final int MAXIMUM_POOL_SIZE       = 100000;
   private static final int KEEP_ALIVE_TIME         = 200;
-  private static final int BLOCKING_QUEUE_CAPACITY = 600;
+  private static final int BLOCKING_QUEUE_CAPACITY = 100000;
 
   private static ExecutorService EXECUTOR = new ThreadPoolExecutor(
                                               CORE_POOL_SIZE,
@@ -70,11 +71,11 @@ public class PersonsGetHandler implements HttpHandler {
             }
 
             if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("Data to send: {}", event);
+              LOGGER.debug("Data to send: {}", JsonStream.serialize(event));
             }
 
             exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "application/json");
-            exchange.getResponseSender().send(event.toString());
+            exchange.getResponseSender().send(JsonStream.serialize(event));
 
           }
         }
