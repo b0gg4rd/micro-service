@@ -1,6 +1,6 @@
-# Maven Java Building
+# Undertow - JDBC
 
-Basic building structure with **Apache Maven** for **Java** development.
+A _microservice_ for the Person domain with **Undertow** and **JDBC**.
 
 ## Requirements
 
