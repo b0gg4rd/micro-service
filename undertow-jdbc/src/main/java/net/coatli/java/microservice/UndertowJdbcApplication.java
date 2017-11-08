@@ -20,10 +20,10 @@ public class UndertowJdbcApplication {
 
   private static final String UNDERTOW_HOST  = "undertow.host";
   private static final String UNDERTOW_PORT  = "undertow.port";
-  private static final int    IO_THREADS     = Runtime.getRuntime().availableProcessors() * 8;
+  private static final int    IO_THREADS     = Runtime.getRuntime().availableProcessors() * 4;
   private static final int    BUFFER_SIZE    = 1024 * 64;
   private static final int    BACKLOG        = 10000;
-  private static final int    WORKER_THREADS = 1000;
+  private static final int    WORKER_THREADS = 200;
 
   public static void main(final String[] args) throws IOException {
     final Properties applicationProperties = new Properties();
