@@ -44,6 +44,8 @@ public class PersonsGetHandler implements HttpHandler {
 
   private static final SqlSessionFactory SQL_SESSION_FACTORY = new SqlSessionFactoryBuilder().build(configuration());
 
+  public PersonsGetHandler() { }
+
   /**
    * {@inheritDoc}
    */
@@ -75,6 +77,7 @@ public class PersonsGetHandler implements HttpHandler {
    * @return
    */
   private static Configuration configuration() {
+
     final Configuration configuration = new Configuration(
         new Environment(DEFAULT_ENVIRONMENT,
                         new JdbcTransactionFactory(),
