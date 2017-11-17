@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.coatli.java.microservice</groupId>
+  <artifactId>api-definition</artifactId>
+  <version>1.0.0</version>
+  <packaging>docker</packaging>
+
+  <name>API - Definition</name>
+  <description>The API definition</description>
+
+  <properties>
+    <maven>3.5.0</maven>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.dockerDirectory>${project.basedir}/src/main/docker</project.build.dockerDirectory>
+    <project.build.swaggerDirectory>${project.basedir}/src/main/swagger</project.build.swaggerDirectory>
+
+    <docker.maven.plugin.version>0.23.0</docker.maven.plugin.version>
+
+    <docker.image.registry>registry-1.docker.io</docker.image.registry>
+    <docker.image.name>b0gg4rd/${project.artifactId}:${project.version}</docker.image.name>
+    <docker.image.build.dockerfiledir>${project.basedir}/src/main/docker</docker.image.build.dockerfiledir>
+  </properties>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+
+    <!-- Defining the plugin stack -->
+    <plugins>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${docker.maven.plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <images>
+            <image>
+              <registry>${docker.image.registry}</registry>
+              <name>${docker.image.name}</name>
+              <build>
+                <dockerFileDir>${docker.image.build.dockerfiledir}</dockerFileDir>
+                <assembly>
+                  <name>project</name>
+                  <descriptorRef>project</descriptorRef>
+                </assembly>
+              </build>
+            </image>
+          </images>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+

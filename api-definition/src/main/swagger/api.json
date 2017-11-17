@@ -1,0 +1,83 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "1.0.0",
+    "title" : "Person API",
+    "description" : "API REST for the Person resource"
+  },
+  "host" : "localhost:8080",
+  "schemes" : [ "http" ],
+  "basePath" : "/api/v1",
+  "paths" : {
+    "/persons/" : {
+      "get" : {
+        "summary" : "Get all Persons resources",
+        "description" : "Returns a list containing Persons",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "Number of persons returned",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "pageNumber",
+          "in" : "query",
+          "description" : "Page number",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "age",
+          "in" : "query",
+          "description" : "Age filter for search",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "A ResponseAllPersonsEvent",
+            "schema" : {
+              "$ref" : "#/definitions/ResponseAllPersonsEvent"
+            }
+          },
+          "400" : {
+            "description" : "Invalid input"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Person" : {
+      "properties" : {
+        "key" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "birthday" : {
+          "type" : "string",
+          "format" : "date"
+        },
+        "age" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "ResponseAllPersonsEvent" : {
+      "properties" : {
+        "persons" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Person"
+          }
+        }
+      }
+    }
+  }
+}
