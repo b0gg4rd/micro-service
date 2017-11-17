@@ -12,7 +12,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
-import com.jsoniter.output.JsonStream;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -61,9 +60,8 @@ public class GetPersonsHandler implements HttpHandler {
 
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "application/json");
         exchange.getResponseSender().send(
-            JsonStream.serialize(
                 new ResponseAllPersonsEvent()
-                    .setPersons(sqlSession.getMapper(PersonMapper.class).findAll())));
+                    .setPersons(sqlSession.getMapper(PersonMapper.class).findAll()).toString());
       }
     });
   }
@@ -80,9 +78,11 @@ public class GetPersonsHandler implements HttpHandler {
                         new HikariDataSource(new HikariConfig(HIKARI_PROPERTIES))));
 
     // Aliases
-    configuration.getTypeAliasRegistry().registerAlias(Person.class.getSimpleName(), Person.class);
-    configuration.getTypeAliasRegistry().registerAlias(RequestAllPersonsEvent.class.getSimpleName(),
-                                                       RequestAllPersonsEvent.class);
+    configuration.getTypeAliasRegistry().registerAlias(
+        Person.class.getSimpleName(), Person.class);
+    configuration.getTypeAliasRegistry().registerAlias(
+        RequestAllPersonsEvent.class.getSimpleName(), RequestAllPersonsEvent.class);
+
     // Mappers
     configuration.addMapper(PersonMapper.class);
 

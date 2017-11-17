@@ -2,6 +2,8 @@ package net.coatli.java.microservice.event;
 
 import java.util.List;
 
+import com.jsoniter.output.JsonStream;
+
 import net.coatli.java.microservice.domain.Person;
 
 public class ResponseAllPersonsEvent {
@@ -19,6 +21,11 @@ public class ResponseAllPersonsEvent {
     this.persons = persons;
 
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return JsonStream.serialize(this);
   }
 
 }

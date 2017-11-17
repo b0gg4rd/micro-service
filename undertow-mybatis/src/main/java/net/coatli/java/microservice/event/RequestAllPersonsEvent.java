@@ -1,5 +1,7 @@
 package net.coatli.java.microservice.event;
 
+import com.jsoniter.output.JsonStream;
+
 public class RequestAllPersonsEvent {
 
   private String  name;
@@ -26,6 +28,11 @@ public class RequestAllPersonsEvent {
     this.age = age;
 
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return JsonStream.serialize(this);
   }
 
 }

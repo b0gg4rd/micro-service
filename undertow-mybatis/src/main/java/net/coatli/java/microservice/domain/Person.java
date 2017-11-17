@@ -2,6 +2,8 @@ package net.coatli.java.microservice.domain;
 
 import java.time.LocalDate;
 
+import com.jsoniter.output.JsonStream;
+
 public class Person {
 
   private String    name;
@@ -50,6 +52,11 @@ public class Person {
     this.age = age;
 
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return JsonStream.serialize(this);
   }
 
 }
