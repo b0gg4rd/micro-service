@@ -24,7 +24,7 @@ import net.coatli.java.microservice.event.RequestAllPersonsEvent;
 import net.coatli.java.microservice.event.ResponseAllPersonsEvent;
 import net.coatli.java.microservice.mapper.PersonMapper;
 
-public class PersonsGetHandler implements HttpHandler {
+public class GetPersonsHandler implements HttpHandler {
 
   private static final int CORE_POOL_SIZE          = 200;
   private static final int MAXIMUM_POOL_SIZE       = 400;
@@ -44,8 +44,6 @@ public class PersonsGetHandler implements HttpHandler {
 
   private static final SqlSessionFactory SQL_SESSION_FACTORY = new SqlSessionFactoryBuilder().build(configuration());
 
-  public PersonsGetHandler() { }
-
   /**
    * {@inheritDoc}
    */
@@ -58,16 +56,14 @@ public class PersonsGetHandler implements HttpHandler {
     }
 
     exchange.dispatch(EXECUTOR, () -> {
-      final SqlSession sqlSession = SQL_SESSION_FACTORY.openSession(true);
 
-      try {
+      try (final SqlSession sqlSession = SQL_SESSION_FACTORY.openSession(true)) {
+
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "application/json");
         exchange.getResponseSender().send(
             JsonStream.serialize(
-                new ResponseAllPersonsEvent().setPersons(
-                    sqlSession.getMapper(PersonMapper.class).findAll())));
-      } finally {
-        sqlSession.close();
+                new ResponseAllPersonsEvent()
+                    .setPersons(sqlSession.getMapper(PersonMapper.class).findAll())));
       }
     });
   }

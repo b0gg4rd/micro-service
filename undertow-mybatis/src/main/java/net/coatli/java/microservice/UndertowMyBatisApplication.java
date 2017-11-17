@@ -11,8 +11,7 @@ import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
-import io.undertow.util.Headers;
-import net.coatli.java.microservice.handler.PersonsGetHandler;
+import net.coatli.java.microservice.handler.GetPersonsHandler;
 
 public class UndertowMyBatisApplication {
 
@@ -44,7 +43,7 @@ public class UndertowMyBatisApplication {
           .setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false)
           .setServerOption(UndertowOptions.ALWAYS_SET_DATE, true)
           .setServerOption(UndertowOptions.RECORD_REQUEST_START_TIME, false)
-          .setHandler(Handlers.header(api(), Headers.SERVER_STRING, "L"))
+          .setHandler(apiRest())
         .build()
         .start();
     }
@@ -56,9 +55,9 @@ public class UndertowMyBatisApplication {
    *
    * @return An instance of {@link HttpHandler} with the operations for the API.
    */
-  private static HttpHandler api() {
+  private static HttpHandler apiRest() {
     return Handlers.routing()
-      .add(GET, "/api/v1/persons/", new PersonsGetHandler());
+      .add(GET, "/api/v1/persons/", new GetPersonsHandler());
   }
 
 }
