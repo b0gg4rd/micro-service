@@ -1,43 +1,63 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "version" : "1.0.0",
     "title" : "Person API",
-    "description" : "API REST for the Person resource"
+    "description" : "API REST for the Person resource",
+    "version" : "1.0.0"
   },
-  "host" : "localhost:8080",
-  "schemes" : [ "http" ],
+  "host" : "localhost",
   "basePath" : "/api/v1",
+  "schemes" : [ "https" ],
+  "tags" : [ {
+    "name" : "Persons",
+    "description" : "Operation for the resource Person"
+  } ],
   "paths" : {
     "/persons/" : {
       "post" : {
-        "summary" : "Create a Person resource",
-        "description" : "Create a Person resource",
+        "tags" : [ "Persons" ],
+        "summary" : "Create a resource Person",
+        "description" : "Create a resource Person",
         "consumes" : [ "application/json" ],
         "parameters" : [ {
           "name" : "createPersonEvent",
           "in" : "body",
-          "description" : "A CreatePersonEvent object",
-          "required" : true,
+          "description" : "An object wrapper for create a resource Person",
           "schema" : {
-            "$ref" : "#/definitions/CreatePersonEvent"
+            "type" : "object",
+            "required" : [ "person" ],
+            "properties" : {
+              "person" : {
+                "$ref" : "#/definitions/Person"
+              }
+            }
           }
         } ],
         "responses" : {
           "201" : {
-            "description" : "Person resource created"
+            "description" : "Resource Person created",
+            "headers" : {
+              "Location" : {
+                "type" : "string",
+                "description" : "The URI for the new resource Person"
+              }
+            }
           },
           "400" : {
-            "description" : "Invalid object CreatePersonEvent"
+            "description" : "Invalid parameters"
+          },
+          "409" : {
+            "description" : "Resource Person duplicate"
           },
           "500" : {
-            "description" : "Server error with description"
+            "description" : "Service error"
           }
         }
       },
       "get" : {
-        "summary" : "Search Persons resources by filters",
-        "description" : "Search Persons resources by filters",
+        "tags" : [ "Persons" ],
+        "summary" : "Search resources Person by filters",
+        "description" : "Search resources Person by filters",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "pageSize",
@@ -63,16 +83,24 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Persons resources obtained",
+            "description" : "Successful search",
             "schema" : {
-              "$ref" : "#/definitions/ResponseAllPersonsEvent"
+              "type" : "object",
+              "properties" : {
+                "persons" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/Person"
+                  }
+                }
+              }
             }
           },
           "400" : {
-            "description" : "Invalid object RequestAllPersonsEvent"
+            "description" : "Invalid parameters"
           },
           "500" : {
-            "description" : "Server error with description"
+            "description" : "Service error"
           }
         }
       }
@@ -86,68 +114,89 @@
         "type" : "string"
       } ],
       "get" : {
-        "summary" : "Get a Person resource with identifier key",
-        "description" : "Get a Person resource with identifier key",
+        "tags" : [ "Persons" ],
+        "summary" : "Get a resource Person with identifier key",
+        "description" : "Get a resource Person with identifier key",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "Person resource found"
+            "description" : "Resource Person found",
+            "schema" : {
+              "$ref" : "#/definitions/Person"
+            }
           },
           "404" : {
-            "description" : "Person resource not found"
+            "description" : "Resource Person not found"
           },
           "400" : {
-            "description" : "Invalid identifier"
+            "description" : "Invalid parameters"
           },
           "500" : {
-            "description" : "Server error with description"
+            "description" : "Service error"
           }
         }
       },
       "put" : {
-        "summary" : "Update a Person resource",
-        "description" : "Update a Person resource",
+        "tags" : [ "Persons" ],
+        "summary" : "Update a resource Person",
+        "description" : "Update a resource Person",
         "consumes" : [ "application/json" ],
         "parameters" : [ {
           "name" : "updatePersonEvent",
           "in" : "body",
-          "description" : "A UpdatePersonEvent object",
-          "required" : true,
+          "description" : "An object wrapper for update a resource Person",
           "schema" : {
-            "$ref" : "#/definitions/UpdatePersonEvent"
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string",
+                "example" : "Mario Vargas Llosas"
+              },
+              "birthday" : {
+                "type" : "string",
+                "format" : "date",
+                "example" : "31/11/2088"
+              },
+              "age" : {
+                "type" : "integer",
+                "format" : "int32",
+                "example" : 48
+              }
+            }
           }
         } ],
         "responses" : {
           "204" : {
-            "description" : "Person resource updated"
+            "description" : "Resource Person updated"
           },
           "404" : {
-            "description" : "Person resource to update not found"
+            "description" : "Resource Person not found"
           },
           "400" : {
-            "description" : "Invalid object UpdatePersonEvent"
+            "description" : "Invalid parameters"
           },
           "500" : {
-            "description" : "Server error with description"
+            "description" : "Service error"
           }
         }
       },
       "delete" : {
-        "summary" : "Remove a Person resource",
-        "description" : "Remove a Person resource",
+        "tags" : [ "Persons" ],
+        "summary" : "Remove a resource Person",
+        "description" : "Remove a resource Person",
         "consumes" : [ "application/json" ],
         "responses" : {
           "204" : {
-            "description" : "Person resource deleted"
+            "description" : "Resource Person deleted"
           },
           "404" : {
-            "description" : "Person resource to delete not found"
+            "description" : "Resource Person not found"
           },
           "400" : {
-            "description" : "Invalid object DeletePersonEvent"
+            "description" : "Invalid parameters"
           },
           "500" : {
-            "description" : "Server error with description"
+            "description" : "Service error"
           }
         }
       }
@@ -158,53 +207,22 @@
       "type" : "object",
       "properties" : {
         "key" : {
-          "type" : "string"
+          "type" : "string",
+          "example" : "123e4567-e89b-12d3-a456-426655440000"
         },
         "name" : {
-          "type" : "string"
+          "type" : "string",
+          "example" : "Alejo Carpentier"
         },
         "birthday" : {
           "type" : "string",
-          "format" : "date"
+          "format" : "date",
+          "example" : "31/12/2099"
         },
         "age" : {
           "type" : "integer",
-          "format" : "int32"
-        }
-      }
-    },
-    "CreatePersonEvent" : {
-      "type" : "object",
-      "properties" : {
-        "person" : {
-          "$ref" : "#/definitions/Person"
-        }
-      }
-    },
-    "UpdatePersonEvent" : {
-      "type" : "object",
-      "properties" : {
-        "name" : {
-          "type" : "string"
-        },
-        "birthday" : {
-          "type" : "string",
-          "format" : "date"
-        },
-        "age" : {
-          "type" : "integer",
-          "format" : "int32"
-        }
-      }
-    },
-    "ResponseAllPersonsEvent" : {
-      "type" : "object",
-      "properties" : {
-        "persons" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/Person"
-          }
+          "format" : "int32",
+          "example" : 45
         }
       }
     }
