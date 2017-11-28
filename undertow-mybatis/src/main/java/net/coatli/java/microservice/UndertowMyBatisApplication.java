@@ -22,10 +22,12 @@ public class UndertowMyBatisApplication {
   private static final int    IO_THREADS     = Runtime.getRuntime().availableProcessors() * 4;
   private static final int    BUFFER_SIZE    = 1024 * 64;
   private static final int    BACKLOG        = 10000;
-  private static final int    WORKER_THREADS = 200;
+  private static final int    WORKER_THREADS = IO_THREADS * 2;
 
   public static void main(final String[] args)
       throws Exception {
+
+    System.setProperty("org.jboss.logging.provider", "slf4j");
 
     try (InputStream inputStream = UndertowMyBatisApplication.class.getResourceAsStream(APPLICATION_PROPERTIES)) {
 

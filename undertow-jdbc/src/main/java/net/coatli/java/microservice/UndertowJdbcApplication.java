@@ -27,6 +27,8 @@ public class UndertowJdbcApplication {
   public static void main(final String[] args)
       throws Exception {
 
+    System.setProperty("org.jboss.logging.provider", "slf4j");
+
     try (InputStream inputStream = UndertowJdbcApplication.class.getResourceAsStream(APPLICATION_PROPERTIES)) {
 
       final Properties applicationProperties = new Properties();
