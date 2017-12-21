@@ -9,7 +9,7 @@
 
   <groupId>net.coatli.java.microservice</groupId>
   <artifactId>api-definition</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>docker</packaging>
 
   <name>API - Definition</name>

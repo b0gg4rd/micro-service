@@ -1,228 +1,275 @@
 {
-  "swagger" : "2.0",
-  "info" : {
-    "title" : "Person API",
-    "description" : "API REST for the Person resource",
-    "version" : "1.0.0"
+  "swagger": "2.0",
+  "info": {
+    "title": "Person API",
+    "description": "API REST for the Person resource",
+    "version": "1.0.0-SNAPSHOT"
   },
-  "host" : "localhost",
-  "basePath" : "/api/v1",
-  "schemes" : [ "https" ],
-  "tags" : [ {
-    "name" : "Persons",
-    "description" : "Operation for the resource Person"
-  } ],
-  "paths" : {
-    "/persons/" : {
-      "post" : {
-        "tags" : [ "Persons" ],
-        "summary" : "Create a resource Person",
-        "description" : "Create a resource Person",
-        "consumes" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "createPersonEvent",
-          "in" : "body",
-          "description" : "An object wrapper for create a resource Person",
-          "schema" : {
-            "type" : "object",
-            "required" : [ "person" ],
-            "properties" : {
-              "person" : {
-                "$ref" : "#/definitions/Person"
-              }
-            }
+  "host": "dev.coatli.net",
+  "basePath": "/api/v1",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json",
+    "text/plain"
+  ],
+  "paths": {
+    "/persons/": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/traceability"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Persons"
+        ],
+        "description": "Create a resource Person",
+        "parameters": [
+          {
+            "name": "person",
+            "description": "A resource Person",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Person"
+            },
+            "required": true
           }
-        } ],
-        "responses" : {
-          "201" : {
-            "description" : "Resource Person created",
-            "headers" : {
-              "Location" : {
-                "type" : "string",
-                "description" : "The URI for the new resource Person"
+        ],
+        "responses": {
+          "201": {
+            "description": "Resource Person created",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "The URI for the new resource Person"
               }
             }
           },
-          "400" : {
-            "description" : "Invalid parameters"
+          "400": {
+            "description": "Request headers or body malformed or empty"
           },
-          "409" : {
-            "description" : "Resource Person duplicate"
+          "406": {
+            "description": "The request have invalid content type"
           },
-          "500" : {
-            "description" : "Service error"
+          "409": {
+            "description": "Resource Person duplicated"
+          },
+          "422": {
+            "description": "Request headers or body with invalid values"
+          },
+          "500": {
+            "description": "Service error"
           }
         }
       },
-      "get" : {
-        "tags" : [ "Persons" ],
-        "summary" : "Search resources Person by filters",
-        "description" : "Search resources Person by filters",
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "pageSize",
-          "in" : "query",
-          "description" : "Number of persons returned",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "pageNumber",
-          "in" : "query",
-          "description" : "Page number",
-          "required" : true,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "age",
-          "in" : "query",
-          "description" : "Age filter for search",
-          "required" : false,
-          "type" : "integer",
-          "format" : "int32"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Successful search",
-            "schema" : {
-              "type" : "object",
-              "properties" : {
-                "persons" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/Person"
-                  }
-                }
+      "get": {
+        "tags": [
+          "Persons"
+        ],
+        "description": "Search resources Person",
+        "parameters": [
+          {
+            "name": "X-Page",
+            "description": "Page number",
+            "in": "header",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          },
+          {
+            "name": "X-Size",
+            "description": "Page size",
+            "in": "header",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          },
+          {
+            "name": "age",
+            "in": "query",
+            "description": "Age filter for search",
+            "type": "integer",
+            "format": "int32",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful search",
+            "headers": {
+              "X-Size": {
+                "type": "integer",
+                "description": "Size of the list"
+              }
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Person"
               }
             }
           },
-          "400" : {
-            "description" : "Invalid parameters"
+          "400": {
+            "description": "Request headers or query params malformed or empty"
           },
-          "500" : {
-            "description" : "Service error"
+          "406": {
+            "description": "The request have invalid content type"
+          },
+          "422": {
+            "description": "Request headers or query params with invalid values"
+          },
+          "500": {
+            "description": "Service error"
           }
         }
       }
     },
-    "/persons/{key}" : {
-      "parameters" : [ {
-        "name" : "key",
-        "in" : "path",
-        "description" : "Person resource identifier",
-        "required" : true,
-        "type" : "string"
-      } ],
-      "get" : {
-        "tags" : [ "Persons" ],
-        "summary" : "Get a resource Person with identifier key",
-        "description" : "Get a resource Person with identifier key",
-        "produces" : [ "application/json" ],
-        "responses" : {
-          "200" : {
-            "description" : "Resource Person found",
-            "schema" : {
-              "$ref" : "#/definitions/Person"
+    "/persons/{key}": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/traceability"
+        },
+        {
+          "name": "key",
+          "description": "Person resource identifier",
+          "in": "path",
+          "type": "string",
+          "format": "uuid",
+          "required": true
+        }
+      ],
+      "get": {
+        "tags": [
+          "Persons"
+        ],
+        "description": "Get a resource Person with identifier key",
+        "responses": {
+          "200": {
+            "description": "Resource Person found",
+            "schema": {
+              "$ref": "#/definitions/Person"
             }
           },
-          "404" : {
-            "description" : "Resource Person not found"
+          "400": {
+            "description": "Request headers or path params malformed or empty"
           },
-          "400" : {
-            "description" : "Invalid parameters"
+          "404": {
+            "description": "Resource Person not found"
           },
-          "500" : {
-            "description" : "Service error"
+          "406": {
+            "description": "The request have invalid content type"
+          },
+          "409": {
+            "description": "Resource Person duplicated"
+          },
+          "422": {
+            "description": "Request headers or path params with invalid values"
+          },
+          "500": {
+            "description": "Service error"
           }
         }
       },
-      "put" : {
-        "tags" : [ "Persons" ],
-        "summary" : "Update a resource Person",
-        "description" : "Update a resource Person",
-        "consumes" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "updatePersonEvent",
-          "in" : "body",
-          "description" : "An object wrapper for update a resource Person",
-          "schema" : {
-            "type" : "object",
-            "properties" : {
-              "name" : {
-                "type" : "string",
-                "example" : "Mario Vargas Llosas"
-              },
-              "birthday" : {
-                "type" : "string",
-                "format" : "date",
-                "example" : "31/11/2088"
-              },
-              "age" : {
-                "type" : "integer",
-                "format" : "int32",
-                "example" : 48
-              }
-            }
+      "put": {
+        "tags": [
+          "Persons"
+        ],
+        "description": "Update a resource Person",
+        "parameters": [
+          {
+            "name": "person",
+            "description": "A resource Person",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Person"
+            },
+            "required": true
           }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "Resource Person updated"
+        ],
+        "responses": {
+          "204": {
+            "description": "Resource Person updated"
           },
-          "404" : {
-            "description" : "Resource Person not found"
+          "400": {
+            "description": "Request headers or path params malformed or empty"
           },
-          "400" : {
-            "description" : "Invalid parameters"
+          "404": {
+            "description": "Resource Person not found"
           },
-          "500" : {
-            "description" : "Service error"
+          "406": {
+            "description": "The request have invalid content type"
+          },
+          "422": {
+            "description": "Request headers or path params with invalid values"
+          },
+          "500": {
+            "description": "Service error"
           }
         }
       },
-      "delete" : {
-        "tags" : [ "Persons" ],
-        "summary" : "Remove a resource Person",
-        "description" : "Remove a resource Person",
-        "consumes" : [ "application/json" ],
-        "responses" : {
-          "204" : {
-            "description" : "Resource Person deleted"
+      "delete": {
+        "tags": [
+          "Persons"
+        ],
+        "description": "Remove a resource Person",
+        "responses": {
+          "204": {
+            "description": "Resource Person deleted"
           },
-          "404" : {
-            "description" : "Resource Person not found"
+          "400": {
+            "description": "Request headers or path params malformed or empty"
           },
-          "400" : {
-            "description" : "Invalid parameters"
+          "404": {
+            "description": "Resource Person not found"
           },
-          "500" : {
-            "description" : "Service error"
+          "406": {
+            "description": "The request have invalid content type"
+          },
+          "422": {
+            "description": "Request headers or path params with invalid values"
+          },
+          "500": {
+            "description": "Service error"
           }
         }
       }
     }
   },
-  "definitions" : {
-    "Person" : {
-      "type" : "object",
-      "properties" : {
-        "key" : {
-          "type" : "string",
-          "example" : "123e4567-e89b-12d3-a456-426655440000"
+  "parameters": {
+    "traceability": {
+      "name": "X-Traceability-ID",
+      "description": "UUID for the traceability of the client request",
+      "in": "header",
+      "required": true,
+      "type": "string"
+    }
+  },
+  "definitions": {
+    "Person": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426655440000"
         },
-        "name" : {
-          "type" : "string",
-          "example" : "Alejo Carpentier"
+        "name": {
+          "type": "string",
+          "example": "Alejo Carpentier"
         },
-        "birthday" : {
-          "type" : "string",
-          "format" : "date",
-          "example" : "31/12/2099"
+        "birthday": {
+          "type": "string",
+          "format": "date",
+          "example": "31/12/2099"
         },
-        "age" : {
-          "type" : "integer",
-          "format" : "int32",
-          "example" : 45
+        "age": {
+          "type": "integer",
+          "format": "int32",
+          "example": 45
         }
       }
     }
