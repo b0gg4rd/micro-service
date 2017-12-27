@@ -19,10 +19,11 @@ public final class PersonMapper {
   public static final Person fromDocument(final Document document) {
 
     return new Person()
-        .setKey(document.getString("_id"))
+        .setKey(document.getObjectId("_id").toString())
         .setName(document.getString("name"))
         .setAge(document.getInteger("age"))
-        .setBirthDay(document.getDate("birthday").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        .setBirthDay(document.getDate("birthday") != null
+            ? document.getDate("birthday").toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null);
   }
 
 }
