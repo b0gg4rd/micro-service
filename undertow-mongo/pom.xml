@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.coatli.java</groupId>
+  <artifactId>undertow-mongo</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Undertow - Mongo</name>
+  <description>A microservice for the Person domain with Undertow and Mongo.</description>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <maven>3.5.0</maven>
+    <main.class>net.coatli.java.microservice.UndertowMongoApplication</main.class>
+
+    <project.build.environment>prod</project.build.environment>
+    <project.build.resourcesDirectory>${basedir}/src/main/resources</project.build.resourcesDirectory>
+    <project.build.testResourcesDirectory>${basedir}/src/test/resources</project.build.testResourcesDirectory>
+    <project.build.filterDirectory>${basedir}/src/main/filters</project.build.filterDirectory>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.jdk.source>${java.version}</project.build.jdk.source>
+    <project.build.jdk.target>${java.version}</project.build.jdk.target>
+
+    <project.build.ut.skip>true</project.build.ut.skip>
+
+    <properties.maven.plugin.version>1.0.0</properties.maven.plugin.version>
+    <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+    <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+    <maven.shade.plugin.version>3.1.0</maven.shade.plugin.version>
+    <exec.maven.plugin.version>1.6.0</exec.maven.plugin.version>
+    <maven.failsafe.plugin.version>2.20.1</maven.failsafe.plugin.version>
+
+    <undertow.core.version>1.4.21.Final</undertow.core.version>
+    <logback.classic.version>1.2.3</logback.classic.version>
+    <mongo.java.driver.version>3.4.2</mongo.java.driver.version>
+    <jsoniter.version>0.9.16</jsoniter.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-core</artifactId>
+      <version>${undertow.core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.classic.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>${mongo.java.driver.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jsoniter</groupId>
+      <artifactId>jsoniter</artifactId>
+      <version>${jsoniter.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+
+    <resources>
+      <resource>
+        <directory>${project.build.resourcesDirectory}</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${project.build.testResourcesDirectory}</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+    <filters>
+      <filter>${project.build.filterDirectory}/${project.build.environment}.properties</filter>
+    </filters>
+
+    <!-- Defining the plugin stack -->
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>${properties.maven.plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${project.build.filterDirectory}/${project.build.environment}.properties</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin.version}</version>
+        <configuration>
+          <source>${project.build.jdk.source}</source>
+          <target>${project.build.jdk.target}</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <optimize>true</optimize>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+        <inherited>true</inherited>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.plugin.version}</version>
+        <configuration>
+          <skip>${project.build.ut.skip}</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven.failsafe.plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${maven.shade.plugin.version}</version>
+        <configuration>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>${main.class}</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec.maven.plugin.version}</version>
+        <configuration>
+          <executable>java</executable>
+          <arguments>
+            <argument>-jar</argument>
+            <argument>${project.build.directory}/${project.build.finalName}.${project.packaging}</argument>
+          </arguments>
+        </configuration>
+        <executions>
+          <execution>
+            <id>launch-app</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <async>true</async>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>local</id>
+
+      <properties>
+        <project.build.environment>local</project.build.environment>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+
+      <properties>
+        <project.build.environment>prod</project.build.environment>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>
+
