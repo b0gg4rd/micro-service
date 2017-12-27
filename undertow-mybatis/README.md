@@ -10,4 +10,8 @@ A _microservice_ for the Person domain with **Undertow** and **MyBatis**.
 
 For execute use:
 
-`$ ./mvnw clean package exec:exec`
+`$ ./mvnw clean package exec:exec -P local`
+
+For integration tests use:
+
+`$ ./mvnw clean verify -P local`

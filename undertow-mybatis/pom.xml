@@ -20,19 +20,28 @@
     <maven>3.5.0</maven>
     <main.class>net.coatli.java.microservice.UndertowMyBatisApplication</main.class>
 
+    <project.build.environment>prod</project.build.environment>
+    <project.build.resourcesDirectory>${basedir}/src/main/resources</project.build.resourcesDirectory>
+    <project.build.testResourcesDirectory>${basedir}/src/test/resources</project.build.testResourcesDirectory>
+    <project.build.filterDirectory>${basedir}/src/main/filters</project.build.filterDirectory>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.jdk.source>${java.version}</project.build.jdk.source>
     <project.build.jdk.target>${java.version}</project.build.jdk.target>
 
-    <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
-    <maven.shade.plugin.version>2.1</maven.shade.plugin.version>
-    <exec.maven.plugin.version>1.5.0</exec.maven.plugin.version>
+    <project.build.ut.skip>true</project.build.ut.skip>
+
+    <properties.maven.plugin.version>1.0.0</properties.maven.plugin.version>
+    <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+    <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+    <maven.shade.plugin.version>3.1.0</maven.shade.plugin.version>
+    <exec.maven.plugin.version>1.6.0</exec.maven.plugin.version>
+    <maven.failsafe.plugin.version>2.20.1</maven.failsafe.plugin.version>
 
     <undertow.core.version>1.4.21.Final</undertow.core.version>
-    <slf4j.simple.version>1.7.7</slf4j.simple.version>
+    <logback.classic.version>1.2.3</logback.classic.version>
     <mybatis.version>3.4.5</mybatis.version>
     <hikaricp.version>2.7.2</hikaricp.version>
-    <mariadb.java.client.version>2.1.2</mariadb.java.client.version>
     <jsoniter.version>0.9.16</jsoniter.version>
   </properties>
 
@@ -43,9 +52,9 @@
       <version>${undertow.core.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.simple.version}</version>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.classic.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mybatis</groupId>
@@ -58,11 +67,6 @@
       <version>${hikaricp.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mariadb.jdbc</groupId>
-      <artifactId>mariadb-java-client</artifactId>
-      <version>${mariadb.java.client.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.jsoniter</groupId>
       <artifactId>jsoniter</artifactId>
       <version>${jsoniter.version}</version>
@@ -72,8 +76,42 @@
   <build>
     <finalName>${project.artifactId}</finalName>
 
+    <resources>
+      <resource>
+        <directory>${project.build.resourcesDirectory}</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${project.build.testResourcesDirectory}</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+    <filters>
+      <filter>${project.build.filterDirectory}/${project.build.environment}.properties</filter>
+    </filters>
+
     <!-- Defining the plugin stack -->
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>${properties.maven.plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${project.build.filterDirectory}/${project.build.environment}.properties</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -87,6 +125,30 @@
           <showDeprecation>true</showDeprecation>
         </configuration>
         <inherited>true</inherited>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.plugin.version}</version>
+        <configuration>
+          <skip>${project.build.ut.skip}</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven.failsafe.plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -122,8 +184,49 @@
             <argument>${project.build.directory}/${project.build.finalName}.${project.packaging}</argument>
           </arguments>
         </configuration>
+        <executions>
+          <execution>
+            <id>launch-app</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <async>true</async>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
+  
+  <profiles>
+    <profile>
+      <id>local</id>
+
+      <properties>
+        <project.build.environment>local</project.build.environment>
+        
+        <mariadb.java.client.version>2.1.2</mariadb.java.client.version>
+      </properties>
+      
+      <dependencies>
+        <dependency>
+          <groupId>org.mariadb.jdbc</groupId>
+          <artifactId>mariadb-java-client</artifactId>
+          <version>${mariadb.java.client.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+
+      <properties>
+        <project.build.environment>prod</project.build.environment>
+      </properties>
+    </profile>
+  </profiles>
+  
 </project>
 

@@ -6,12 +6,22 @@ import com.jsoniter.output.JsonStream;
 
 public class Person {
 
+  private String    key;
   private String    name;
   private LocalDate birthDay;
-  private String    key;
   private Integer   age;
 
   public Person() {
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  public Person setKey(final String key) {
+    this.key = key;
+
+    return this;
   }
 
   public String getName() {
@@ -30,16 +40,6 @@ public class Person {
 
   public Person setBirthDay(final LocalDate birthDay) {
     this.birthDay = birthDay;
-
-    return this;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public Person setKey(final String key) {
-    this.key = key;
 
     return this;
   }

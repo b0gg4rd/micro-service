@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+    <Marker>PROFILER</Marker>
+    <OnMatch>NEUTRAL</OnMatch>
+  </turboFilter>
+
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <immediateFlush>true</immediateFlush>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %X{tId} [%thread] %-5level %class{36}:%L %M - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="${logger.root.level}">
+    <appender-ref ref="stdout"/>
+  </root>
+
+  <logger name="${project.groupId}" level="${logger.app.level}" additivity="false">
+    <appender-ref ref="stdout"/>
+  </logger>
+</configuration>
